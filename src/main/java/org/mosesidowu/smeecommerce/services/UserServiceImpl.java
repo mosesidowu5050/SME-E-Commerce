@@ -1,5 +1,6 @@
 package org.mosesidowu.smeecommerce.services;
 
+import lombok.RequiredArgsConstructor;
 import org.mosesidowu.smeecommerce.data.models.User;
 import org.mosesidowu.smeecommerce.data.repository.UserRepository;
 import org.mosesidowu.smeecommerce.dtos.requests.UserLoginRequestDTO;
@@ -21,16 +22,14 @@ import java.util.List;
 import static org.mosesidowu.smeecommerce.utils.Mapper.*;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private JwtUtil jwtUtil;
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
 
     @Override
