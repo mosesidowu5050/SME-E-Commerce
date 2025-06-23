@@ -14,6 +14,8 @@ public class Product {
     private String productName;
     private String productDescription;
     private double productPrice;
+    private int productQuantity;
+    private String productImageUrl;
     @DBRef
     private ProductCategory productCategory;
 

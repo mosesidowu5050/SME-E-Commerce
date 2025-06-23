@@ -4,6 +4,8 @@ import org.mosesidowu.smeecommerce.data.models.Product;
 import org.mosesidowu.smeecommerce.data.models.ProductCategory;
 import org.mosesidowu.smeecommerce.data.repository.ProductRepository;
 import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
+import org.mosesidowu.smeecommerce.dtos.responses.AllProductsResponse;
+import org.mosesidowu.smeecommerce.utils.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,12 +29,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(String productId) {
-
     }
 
     @Override
-    public List<Product> getProductByCategory(ProductCategory category) {
-        return List.of();
+    public List<AllProductsResponse> getProductByCategory(ProductCategory category) {
+        List<Product> products = productRepository.findByProductCategoryContainingIgnoreCase(category);
+        return Mapper.toAllProductsResponse(products);
     }
 
     @Override
