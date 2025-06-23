@@ -2,10 +2,11 @@ package org.mosesidowu.smeecommerce.data.models;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document(collection = "products")
+@Document("products")
 public class Product {
 
     @Id
@@ -13,6 +14,7 @@ public class Product {
     private String productName;
     private String productDescription;
     private double productPrice;
+    @DBRef
     private ProductCategory productCategory;
 
 }
