@@ -1,12 +1,13 @@
-package org.mosesidowu.smeecommerce.services;
+package org.mosesidowu.smeecommerce.data.repository;
 
 import org.mosesidowu.smeecommerce.data.models.ShoppingCart;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-import javax.swing.text.html.Option;
+import java.util.Map;
 import java.util.Optional;
 
-public interface ShoppingCartService {
+public interface ShoppingCartRepository extends MongoRepository<ShoppingCart,String> {
 
     Optional<ShoppingCart> findByUserId(String userId);
-    
+
 }

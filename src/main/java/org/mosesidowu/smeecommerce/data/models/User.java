@@ -2,11 +2,13 @@ package org.mosesidowu.smeecommerce.data.models;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-
-@Document(collection = "users")
-public abstract class User {
+@Data
+@Document("users")
+@TypeAlias("user")
+public class User {
 
     @Id
     private String userId;
@@ -15,7 +17,6 @@ public abstract class User {
     private String password;
     private String phoneNumber;
     private Address address;
-    private String country;
     private String role;
 
 }
