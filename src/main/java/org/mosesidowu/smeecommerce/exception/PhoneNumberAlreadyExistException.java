@@ -1,4 +1,7 @@
 package org.mosesidowu.smeecommerce.exception;
 
-public class PhoneNumberAlreadyExistException {
+public class PhoneNumberAlreadyExistException extends UserException {
+    public PhoneNumberAlreadyExistException(String message) {
+        super(message);
+    }
 }
