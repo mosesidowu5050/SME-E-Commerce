@@ -11,5 +11,6 @@ public interface UserService {
     User register (UserRegistrationRequestDTO userRegistrationRequest);
     JwtResponse login(UserLoginRequestDTO userLoginRequest);
     User getUserByEmail(String email);
+    void logout(String email);
 
 }

@@ -50,6 +50,14 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    @Override
+    public void logout(String email) {
+        if (email == null || email.trim().isEmpty()) throw new InvalidEmailException("Email cannot be null or empty");
+
+        userRepository.findUsersByEmail(email)
+                .orElseThrow(() -> new UserException("User not found with email: " + email));
+    }
+
 
     private JwtResponse getJwtResponse(UserLoginRequestDTO userLoginRequest) {
         User user = userRepository.findUsersByEmail(userLoginRequest.getEmail())
