@@ -43,18 +43,12 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
     public JwtResponse login(UserLoginRequestDTO userLoginRequest) {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(userLoginRequest.getEmail(), userLoginRequest.getPassword())
-            );
-        } catch (Exception e) {
-            throw new InvalidEmailException("Invalid email or password");
-        }
+        authenticateUserLogin(userLoginRequest);
         return getJwtResponse(userLoginRequest);
     }
+
 
 
     private JwtResponse getJwtResponse(UserLoginRequestDTO userLoginRequest) {
@@ -70,12 +64,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByEmail(String email) {
-
         User user = userRepository.findUsersByEmail(email)
                 .orElseThrow(() -> new UserException("User not found with email: " + email));
         if (user.getEmail() == null || user.getEmail().isEmpty()) throw new InvalidEmailException("Email cannot be null or empty");
 
         return user;
+    }
+
+
+
+    private void authenticateUserLogin(UserLoginRequestDTO userLoginRequest) {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(userLoginRequest.getEmail(), userLoginRequest.getPassword())
+            );
+        } catch (Exception e) {
+            throw new InvalidEmailException("Invalid email or password");
+        }
     }
 
 
