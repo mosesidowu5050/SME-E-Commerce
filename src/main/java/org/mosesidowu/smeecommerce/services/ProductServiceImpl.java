@@ -33,8 +33,9 @@ public class ProductServiceImpl implements ProductService {
             String imageUrl = uploadResult.get("url").toString();
             Product product = new Product();
             ProductMapper.mapProduct(product,request);
-
-
+            product.setProductImageUrl(imageUrl);
+            productRepository.save(product);
+            return ProductMapper.mapProductToResponse(product);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

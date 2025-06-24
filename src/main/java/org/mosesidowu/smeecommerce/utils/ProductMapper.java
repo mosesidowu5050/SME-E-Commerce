@@ -4,6 +4,7 @@ import org.mosesidowu.smeecommerce.data.models.Product;
 import org.mosesidowu.smeecommerce.data.models.ProductCategory;
 import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
 import org.mosesidowu.smeecommerce.dtos.responses.AllProductsResponse;
+import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,5 +34,18 @@ public class ProductMapper {
         product.setProductQuantity(request.getQuantity());
         product.setProductCategory(ProductCategory.valueOf(request.getCategory()));
     }
+
+    public static CreateProductResponse mapProductToResponse(Product product) {
+        CreateProductResponse response = new CreateProductResponse();
+        response.setMessage("Product added successfully");
+        response.setProductName(product.getProductName());
+        response.setDescription(product.getProductDescription());
+        response.setPrice(product.getProductPrice());
+        response.setQuantity(product.getProductQuantity());
+        response.setCategory(product.getProductCategory().name());
+        response.setImageUrl(product.getProductImageUrl());
+        return response;
+    }
+
 }
 
