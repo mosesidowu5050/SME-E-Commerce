@@ -2,19 +2,17 @@ package org.mosesidowu.smeecommerce.data.models;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Document(collection = "sellers")
+@TypeAlias("seller")
 public class Seller extends User {
 
-    @Id
-    private String sellerId;
-    private String userId;
+    @DBRef
     private List<Product> products;
 
 }
