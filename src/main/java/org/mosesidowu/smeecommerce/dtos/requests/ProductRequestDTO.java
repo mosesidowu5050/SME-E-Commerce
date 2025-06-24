@@ -8,7 +8,9 @@ public class ProductRequestDTO {
 
     private String productName;
     private String productDescription;
-    private String productPrice;
+    private double productPrice;
+    private int productQuantity;
+    private String productImageUrl;
     private ProductCategory productCategory;
 
 }
