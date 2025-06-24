@@ -19,12 +19,15 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
-    private final UserDetailsService userDetailsService;
-    private final JwtService jwtService;
+    @Autowired
+    private JwtUtil jwtUtil;
+    @Autowired
+    private UserDetailsService userDetailsService;
+    @Autowired
+    private JwtService jwtService;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -46,14 +49,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
 
-            if (jwtService.isBlacklisted(token)) throw new UserException("Token has been invalidated (logged out)");
-
             try {
                 email = jwtUtil.extractUsername(token);
             } catch (Exception e) {
                 System.out.println("JWT parsing error: " + e.getMessage());
             }
         }
+
+//        if (jwtService.isBlacklisted(token)) throw new UserException("Token has been invalidated (logged out)");
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
