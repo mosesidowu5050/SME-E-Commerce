@@ -1,6 +1,8 @@
 package org.mosesidowu.smeecommerce.utils;
 
 import org.mosesidowu.smeecommerce.data.models.Product;
+import org.mosesidowu.smeecommerce.data.models.ProductCategory;
+import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
 import org.mosesidowu.smeecommerce.dtos.responses.AllProductsResponse;
 
 import java.util.List;
@@ -22,6 +24,14 @@ public class ProductMapper {
         return products.stream()
                 .map(ProductMapper::mapToResponse)
                 .collect(Collectors.toList());
+    }
+
+    public static void mapProduct(Product product, CreateProductRequest request) {
+        product.setProductName(request.getProductName());
+        product.setProductDescription(request.getDescription());
+        product.setProductPrice(request.getPrice());
+        product.setProductQuantity(request.getQuantity());
+        product.setProductCategory(ProductCategory.valueOf(request.getCategory()));
     }
 }
 

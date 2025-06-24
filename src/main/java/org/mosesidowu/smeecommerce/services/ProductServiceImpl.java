@@ -31,6 +31,8 @@ public class ProductServiceImpl implements ProductService {
         try {
             Map uploadResult = cloudinary.uploader().upload(imageFile.getBytes(),Map.of());
             String imageUrl = uploadResult.get("url").toString();
+            Product product = new Product();
+            ProductMapper.mapProduct(product,request);
 
 
         } catch (IOException e) {
