@@ -10,6 +10,7 @@ import org.mosesidowu.smeecommerce.dtos.responses.JwtResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.UserRegisterResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.BadCredentialsException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,6 +37,25 @@ public class UserServiceImplTest {
         return registerCustomer;
     }
 
+    private UserRegistrationRequestDTO registerSeller() {
+        UserRegistrationRequestDTO registerSeller = new UserRegistrationRequestDTO();
+        registerSeller.setFullName("Eric Alli");
+        registerSeller.setEmail("ea@gmail.com");
+        registerSeller.setPhoneNumber("09092929292");
+        registerSeller.setPassword("54321");
+        registerSeller.setRole(Role.SELLER);
+        return registerSeller;
+    }
+
+    private UserRegistrationRequestDTO registerAdmin() {
+        UserRegistrationRequestDTO registerAdmin = new UserRegistrationRequestDTO();
+        registerAdmin.setFullName("Peejay");
+        registerAdmin.setEmail("pj@gmail.com");
+        registerAdmin.setPhoneNumber("09093939393");
+        registerAdmin.setPassword("12543");
+        registerAdmin.setRole(Role.ADMIN);
+        return registerAdmin;
+    }
     @Test
     public void testToRegisterCustomer_returnResponse_whenUserIsRegisteredSuccessfully() {
         UserRegistrationRequestDTO register = new UserRegistrationRequestDTO();
@@ -117,7 +137,7 @@ public class UserServiceImplTest {
 
     @Test
     public void testToLogin2Customer_returnResponse_whenUserIsLoginSuccessfully() {
-        UserRegistrationRequestDTO registerUser = registerUser();
+        UserRegistrationRequestDTO registerUser = registerCustomer();
         UserRegisterResponseDTO userResponse = userService.register(registerUser);
 
         assertNotNull(userResponse);
@@ -129,6 +149,50 @@ public class UserServiceImplTest {
         assertNotNull(response);
         assertEquals(1, userRepository.count());
     }
+
+    @Test
+    public void testToLoginSeller_returnResponse_whenUserIsLoginSuccessfully() {
+        UserRegistrationRequestDTO registerUser = registerSeller();
+        UserRegisterResponseDTO userResponse = userService.register(registerUser);
+        assertNotNull(userResponse);
+
+        UserLoginRequestDTO login = new UserLoginRequestDTO();
+        login.setEmail("ea@gmail.com");
+        login.setPassword("54321");
+
+        JwtResponse response = userService.login(login);
+        assertNotNull(response);
+        assertEquals(1, userRepository.count());
+
+    }
+
+    @Test
+    public void testToLoginAdmin_returnResponse_whenUserIsLoginSuccessfully() {
+        UserRegistrationRequestDTO registerUser = registerAdmin();
+        UserRegisterResponseDTO userResponse = userService.register(registerUser);
+        assertNotNull(userResponse);
+
+        UserLoginRequestDTO login = new UserLoginRequestDTO();
+        login.setEmail("pj@gmail.com");
+        login.setPassword("12543");
+
+        JwtResponse response = userService.login(login);
+        assertNotNull(response);
+        assertEquals(1, userRepository.count());
+
+    }
+
+    @Test
+    public void testToLoginUser_throwException_whenUserUsesInvalidPassword() {
+        UserRegisterResponseDTO userResponse = userService.register(registerAdmin());
+        assertNotNull(userResponse);
+
+        UserLoginRequestDTO loginUser = new UserLoginRequestDTO();
+        loginUser.setEmail(userResponse.getEmail());
+        loginUser.setPassword("12443");
+
+        assertThrows(BadCredentialsException.class, () -> userService.login(loginUser));
+      }
     
 }
 
