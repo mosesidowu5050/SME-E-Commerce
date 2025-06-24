@@ -1,6 +1,6 @@
 package org.mosesidowu.smeecommerce.controller;
 
-import org.mosesidowu.smeecommerce.data.models.User;
+
 import org.mosesidowu.smeecommerce.dtos.requests.UserLoginRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.requests.UserRegistrationRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.ApiResponse;
@@ -35,6 +35,7 @@ public class AuthController  {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(e.getMessage(), false));
         }
     }
+
 
 
     @PostMapping("/login")
