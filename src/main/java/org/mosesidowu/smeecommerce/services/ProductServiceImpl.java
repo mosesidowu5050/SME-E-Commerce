@@ -1,25 +1,41 @@
 package org.mosesidowu.smeecommerce.services;
 
+import com.cloudinary.Cloudinary;
 import org.mosesidowu.smeecommerce.data.models.Product;
 import org.mosesidowu.smeecommerce.data.models.ProductCategory;
 import org.mosesidowu.smeecommerce.data.repository.ProductRepository;
+import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
 import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.AllProductsResponse;
+import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
 import org.mosesidowu.smeecommerce.utils.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private Cloudinary cloudinary;
+
 
     @Override
-    public Product createProduct(ProductRequestDTO product) {
-        return null;
+    public CreateProductResponse createProduct(CreateProductRequest request, MultipartFile imageFile) {
+        try {
+            Map uploadResult = cloudinary.uploader().upload(imageFile.getBytes(),Map.of());
+            String imageUrl = uploadResult.get("url").toString();
+
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
