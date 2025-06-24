@@ -6,12 +6,12 @@ import org.mosesidowu.smeecommerce.data.repository.UserRepository;
 import org.mosesidowu.smeecommerce.dtos.requests.UserLoginRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.requests.UserRegistrationRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.JwtResponse;
+import org.mosesidowu.smeecommerce.dtos.responses.UserRegisterResponseDTO;
 import org.mosesidowu.smeecommerce.exception.EmailAlreadyExistException;
 import org.mosesidowu.smeecommerce.exception.InvalidEmailException;
 import org.mosesidowu.smeecommerce.exception.PhoneNumberAlreadyExistException;
 import org.mosesidowu.smeecommerce.exception.UserException;
 import org.mosesidowu.smeecommerce.security.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,13 +33,15 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User register(UserRegistrationRequestDTO userRegistrationRequest) {
+    public UserRegisterResponseDTO register(UserRegistrationRequestDTO userRegistrationRequest) {
         isUserRegistered(userRegistrationRequest);
         User user = registerUserRequest(userRegistrationRequest);
         user.setPassword(passwordEncoder.encode(userRegistrationRequest.getPassword()));
+        User savedUser = userRepository.save(user);
 
-        return userRepository.save(user);
+        return getUserResponse(savedUser);
     }
+
 
 
     @Override
@@ -56,6 +58,7 @@ public class UserServiceImpl implements UserService {
         userRepository.findUsersByEmail(email)
                 .orElseThrow(() -> new UserException("User not found with email: " + email));
     }
+
 
 
     private JwtResponse getJwtResponse(UserLoginRequestDTO userLoginRequest) {
@@ -85,7 +88,7 @@ public class UserServiceImpl implements UserService {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userLoginRequest.getEmail(), userLoginRequest.getPassword())
             );
-        } catch (Exception e) {
+        } catch (UserException e) {
             throw new InvalidEmailException("Invalid email or password");
         }
     }
@@ -95,6 +98,4 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(userRegistrationRequest.getEmail())) throw new EmailAlreadyExistException("Email already exists");
         if (userRepository.existsByPhoneNumber(userRegistrationRequest.getPhoneNumber())) throw new PhoneNumberAlreadyExistException("Phone number already exists");
     }
-
-
 }

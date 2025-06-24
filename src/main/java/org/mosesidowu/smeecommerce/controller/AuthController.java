@@ -5,6 +5,7 @@ import org.mosesidowu.smeecommerce.dtos.requests.UserLoginRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.requests.UserRegistrationRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.ApiResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.JwtResponse;
+import org.mosesidowu.smeecommerce.dtos.responses.UserRegisterResponseDTO;
 import org.mosesidowu.smeecommerce.exception.UserException;
 import org.mosesidowu.smeecommerce.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,9 @@ public class AuthController  {
 
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(UserRegistrationRequestDTO registerUserRequest) {
+    public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequestDTO registerUserRequest) {
         try {
-            User response = userService.register(registerUserRequest);
+            UserRegisterResponseDTO response = userService.register(registerUserRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(response, true));
         } catch (UserException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(e.getMessage(), false));
@@ -37,7 +38,7 @@ public class AuthController  {
 
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(UserLoginRequestDTO loginUserRequest) {
+    public ResponseEntity<?> loginUser(@RequestBody UserLoginRequestDTO loginUserRequest) {
         try {
             JwtResponse response = userService.login(loginUserRequest);
             return ResponseEntity.ok(new ApiResponse(response, true));
