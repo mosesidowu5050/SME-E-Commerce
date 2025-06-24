@@ -10,7 +10,7 @@ import org.mosesidowu.smeecommerce.dtos.responses.UserRegisterResponseDTO;
 public interface UserService {
 
     UserRegisterResponseDTO register (UserRegistrationRequestDTO userRegistrationRequest);
-    JwtResponse login(UserLoginRequestDTO userLoginRequest);
+    JwtResponse login(UserLoginRequestDTO userLoTginRequest);
     User getUserByEmail(String email);
     void logout(String email);
 
