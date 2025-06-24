@@ -9,9 +9,12 @@ import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.AllProductsResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
 import org.mosesidowu.smeecommerce.exception.ProductNotFoundException;
+import org.mosesidowu.smeecommerce.exception.UnauthorizedActionException;
 import org.mosesidowu.smeecommerce.exception.UserException;
 import org.mosesidowu.smeecommerce.utils.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,7 +29,7 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
     @Autowired
     private Cloudinary cloudinary;
-    private static MultipartFile image;
+
 
 
     @Override
@@ -57,18 +60,26 @@ public class ProductServiceImpl implements ProductService {
         existingProduct.setProductQuantity(productDTO.getProductQuantity());
         existingProduct.setProductCategory(productDTO.getProductCategory());
 
-        Map uploadResult = cloudinary.uploader().upload(imageFile.getBytes(),Map.of());
-        String imageUrl = uploadResult.get("url").toString();
-
-
-        // Save updated product
         return productRepository.save(existingProduct);
     }
 
 
     @Override
     public void deleteProduct(String productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException("Product with ID " + productId + " not found"));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        if (!product.getProductName().equals(email)) {
+            throw new UnauthorizedActionException("You are not allowed to delete this product");
+        }
+
+
+        productRepository.delete(product);
     }
+
 
     @Override
     public List<AllProductsResponse> getProductByCategory(ProductCategory category) {

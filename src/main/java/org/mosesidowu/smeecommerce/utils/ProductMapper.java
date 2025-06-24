@@ -19,6 +19,7 @@ public class ProductMapper {
         response.setQuantity(product.getProductQuantity());
         response.setCategory(product.getProductCategory().name());
         response.setImageUrl(product.getProductImageUrl());
+
         return response;
     }
 
@@ -48,6 +49,7 @@ public class ProductMapper {
         response.setQuantity(product.getProductQuantity());
         response.setCategory(product.getProductCategory().name());
         response.setImageUrl(product.getProductImageUrl());
+
         return response;
     }
 }
