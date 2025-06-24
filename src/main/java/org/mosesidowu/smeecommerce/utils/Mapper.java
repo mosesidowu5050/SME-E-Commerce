@@ -64,6 +64,6 @@ public class Mapper {
 
     private static void validateRole(String role) {
         if (!role.matches("^(CUSTOMER|SELLER|ADMIN)$"))
-            throw new InvalidRoleException("Invalid role. Must be CUSTOMER, SELLER or ADMIN");
+            throw new InvalidRoleException("Invalid role. Must be CUSTOMER, BUYER or ADMIN");
     }
 }
