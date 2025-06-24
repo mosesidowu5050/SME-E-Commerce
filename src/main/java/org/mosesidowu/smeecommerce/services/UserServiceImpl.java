@@ -65,12 +65,12 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User getUserByEmail(String email) {
+    public UserRegisterResponseDTO getUserByEmail(String email) {
         User user = userRepository.findUsersByEmail(email)
                 .orElseThrow(() -> new UserException("User not found with email: " + email));
         if (user.getEmail() == null || user.getEmail().isEmpty()) throw new InvalidEmailException("Email cannot be null or empty");
 
-        return user;
+        return getUserResponse(user);
     }
 
 

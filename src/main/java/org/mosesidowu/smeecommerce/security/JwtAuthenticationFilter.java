@@ -56,10 +56,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-//        if (jwtService.isBlacklisted(token)) throw new UserException("Token has been invalidated (logged out)");
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
+            if (jwtService.isBlacklisted(token)) throw new UserException("Token has been invalidated (logged out)");
 
             if (jwtUtil.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken =

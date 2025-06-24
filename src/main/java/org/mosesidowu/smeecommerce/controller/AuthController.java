@@ -65,7 +65,7 @@ public class AuthController  {
         String token = authHeader.substring(7);
         String email = jwtUtil.extractUsername(token);
         try {
-            User user = userService.getUserByEmail(email);
+            UserRegisterResponseDTO user = userService.getUserByEmail(email);
             return ResponseEntity.ok(new ApiResponse(user, true));
         } catch (UserException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), false));
