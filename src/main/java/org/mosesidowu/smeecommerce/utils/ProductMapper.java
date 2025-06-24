@@ -1,14 +1,13 @@
 package org.mosesidowu.smeecommerce.utils;
 
 import org.mosesidowu.smeecommerce.data.models.Product;
-import org.mosesidowu.smeecommerce.data.models.ProductCategory;
 import org.mosesidowu.smeecommerce.dtos.responses.AllProductsResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class Mapper {
+public class ProductMapper {
     public static AllProductsResponse mapToResponse(Product product) {
         AllProductsResponse response = new AllProductsResponse();
         response.setProductName(product.getProductName());
@@ -21,7 +20,7 @@ public class Mapper {
     }
     public static List<AllProductsResponse> toAllProductsResponse(List<Product> products) {
         return products.stream()
-                .map(Mapper::mapToResponse)
+                .map(ProductMapper::mapToResponse)
                 .collect(Collectors.toList());
     }
 }
