@@ -1,12 +1,14 @@
 package org.mosesidowu.smeecommerce.controller;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.mosesidowu.smeecommerce.dtos.requests.UserLoginRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.requests.UserRegistrationRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.ApiResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.JwtResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.UserRegisterResponseDTO;
 import org.mosesidowu.smeecommerce.exception.UserException;
+import org.mosesidowu.smeecommerce.services.JwtService;
 import org.mosesidowu.smeecommerce.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,8 @@ public class AuthController  {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private JwtService jwtService;
 
 
     @PostMapping("/register")
@@ -51,11 +55,14 @@ public class AuthController  {
 
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(@RequestBody Map<String, String> payload) {
-        String email = payload.get("email");
-        userService.logout(email);
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) return ResponseEntity.badRequest().body("Invalid token");
+
+        String token = authHeader.substring(7);
+        jwtService.blacklistToken(token);
+
         return ResponseEntity.ok("Logout successful");
     }
-
-
 }
