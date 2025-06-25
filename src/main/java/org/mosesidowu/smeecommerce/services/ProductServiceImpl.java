@@ -8,6 +8,7 @@ import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
 import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.AllProductsResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
+import org.mosesidowu.smeecommerce.exception.InvalidCategoryException;
 import org.mosesidowu.smeecommerce.exception.ProductNotFoundException;
 import org.mosesidowu.smeecommerce.exception.UnauthorizedActionException;
 import org.mosesidowu.smeecommerce.exception.UserException;
@@ -59,7 +60,7 @@ public class ProductServiceImpl implements ProductService {
         existingProduct.setProductDescription(productDTO.getProductDescription());
         existingProduct.setProductPrice(productDTO.getProductPrice());
         existingProduct.setProductQuantity(productDTO.getProductQuantity());
-        existingProduct.setProductCategory(productDTO.getProductCategory());
+        existingProduct.setProductCategory(safeParseCategory(String.valueOf(productDTO.getProductCategory())));
 
         return productRepository.save(existingProduct);
     }
@@ -91,4 +92,14 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> searchProducts(String searchTerm) {
         return List.of();
     }
+
+    
+    public static ProductCategory safeParseCategory(String categoryStr) {
+        try {
+            return ProductCategory.valueOf(categoryStr.trim().toUpperCase());
+        } catch (UserException | NullPointerException e) {
+            throw new InvalidCategoryException("Invalid product category: " + categoryStr);
+        }
+    }
+
 }
