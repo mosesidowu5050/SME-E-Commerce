@@ -40,6 +40,7 @@ public class ProductMapper {
         product.setProductPrice(request.getPrice());
         product.setProductQuantity(request.getQuantity());
         product.setProductCategory(ProductCategory.valueOf(request.getCategory()));
+        product.setProductImageUrl(request.getImageUrl());
     }
 
 
