@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/products")
 @Validated
-public class ItemController {
+public class ProductController {
 
     @Autowired
     private ProductService productService;

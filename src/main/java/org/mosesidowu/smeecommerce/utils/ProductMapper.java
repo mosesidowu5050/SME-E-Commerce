@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class ItemMapper {
+public class ProductMapper {
     public static AllProductResponse mapToResponse(Product product) {
         AllProductResponse response = new AllProductResponse();
         response.setProductName(product.getProductName());
@@ -29,7 +29,7 @@ public class ItemMapper {
 
     public static List<AllProductResponse> toAllProductsResponse(List<Product> products) {
         return products.stream()
-                .map(ItemMapper::mapToResponse)
+                .map(ProductMapper::mapToResponse)
                 .collect(Collectors.toList());
     }
 
