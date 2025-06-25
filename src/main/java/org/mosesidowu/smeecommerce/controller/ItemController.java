@@ -1,10 +1,10 @@
 package org.mosesidowu.smeecommerce.controller;
 
-import org.mosesidowu.smeecommerce.dtos.requests.CreateItemRequest;
+import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
 import org.mosesidowu.smeecommerce.dtos.responses.ApiResponse;
-import org.mosesidowu.smeecommerce.dtos.responses.CreateItemResponse;
+import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
 import org.mosesidowu.smeecommerce.exception.UserException;
-import org.mosesidowu.smeecommerce.services.ItemService;
+import org.mosesidowu.smeecommerce.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,17 +17,17 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/products")
 @Validated
-public class ProductController {
+public class ItemController {
 
     @Autowired
-    private ItemService productService;
+    private ProductService productService;
 
     @PostMapping(value = "/create_product", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProduct(
-            @RequestPart("product") CreateItemRequest request,
+            @RequestPart("product") CreateProductRequest request,
             @RequestPart("image") MultipartFile imageFile) {
         try {
-            CreateItemResponse response = productService.createProduct(request, imageFile);
+            CreateProductResponse response = productService.createProduct(request, imageFile);
             return new ResponseEntity<>(new ApiResponse(response, true), HttpStatus.OK);
         } catch (UserException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), false));

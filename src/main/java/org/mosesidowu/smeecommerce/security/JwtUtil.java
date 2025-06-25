@@ -1,6 +1,5 @@
 package org.mosesidowu.smeecommerce.security;
 
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -12,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class JwtUtil {
@@ -23,7 +24,6 @@ public class JwtUtil {
 
     @PostConstruct
     public void init() {
-
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         this.signingKey = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -34,6 +34,11 @@ public class JwtUtil {
 
     public Date extractExpiration(String token) {
         return extractClaims(token).getExpiration();
+    }
+
+    public List<String> extractRoles(String token) {
+        Claims claims = extractClaims(token);
+        return claims.get("roles", List.class);
     }
 
     private Claims extractClaims(String token) {
@@ -53,10 +58,12 @@ public class JwtUtil {
         return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    public String generateToken(String email) {
-        long expirationTime = 60 * 60 * 1000;
+    public String generateToken(String email, List<String> roles) {
+        long expirationTime = 60 * 60 * 1000; // 1 hour
+
         return Jwts.builder()
                 .setSubject(email)
+                .addClaims(Map.of("roles", roles))
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(signingKey, SignatureAlgorithm.HS256)
