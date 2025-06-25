@@ -12,7 +12,7 @@ import org.mosesidowu.smeecommerce.exception.InvalidCategoryException;
 import org.mosesidowu.smeecommerce.exception.ItemNotFoundException;
 import org.mosesidowu.smeecommerce.exception.UnauthorizedActionException;
 import org.mosesidowu.smeecommerce.exception.UserException;
-import org.mosesidowu.smeecommerce.utils.ItemMapper;
+import org.mosesidowu.smeecommerce.utils.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,11 +40,11 @@ public class ProductServiceImpl implements ProductService {
             String imageUrl = uploadResult.get("url").toString();
 
             Product product = new Product();
-            ItemMapper.mapProduct(product,request);
+            ProductMapper.mapProduct(product,request);
             product.setProductImageUrl(imageUrl);
             productRepository.save(product);
 
-            return ItemMapper.mapProductToResponse(product);
+            return ProductMapper.mapProductToResponse(product);
         } catch (UserException | IOException e) {
             throw new UserException("Failed to upload image: " + e.getMessage());
         }
@@ -56,7 +56,7 @@ public class ProductServiceImpl implements ProductService {
         Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new ItemNotFoundException("Product with ID " + productId + " not found"));
 
-        ItemMapper.updateMapperProductResponse(productDTO, existingProduct);
+        ProductMapper.updateMapperProductResponse(productDTO, existingProduct);
 
         return productRepository.save(existingProduct);
     }
@@ -82,7 +82,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<AllProductResponse> getProductByCategory(ProductCategory category) {
         List<Product> products = productRepository.findByProductCategoryContainingIgnoreCase(category);
-        return ItemMapper.toAllProductsResponse(products);
+        return ProductMapper.toAllProductsResponse(products);
     }
 
     @Override
