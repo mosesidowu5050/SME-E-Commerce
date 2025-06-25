@@ -17,7 +17,7 @@ public class RoleMapper {
         seller.setPhoneNumber(user.getPhoneNumber());
         seller.setRole(user.getRole());
         seller.setAddress(user.getAddress());
-        seller.setProducts(List.of());
+        seller.setItems(List.of());
 
         return seller;
     }

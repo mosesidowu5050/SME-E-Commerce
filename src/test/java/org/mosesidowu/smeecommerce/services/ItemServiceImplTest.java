@@ -9,13 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mosesidowu.smeecommerce.data.models.Product;
-import org.mosesidowu.smeecommerce.data.models.ProductCategory;
-import org.mosesidowu.smeecommerce.data.repository.ProductRepository;
-import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
-import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
+import org.mosesidowu.smeecommerce.dtos.requests.CreateItemRequest;
 import org.mosesidowu.smeecommerce.exception.UserException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -28,10 +23,10 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
-public class ProductServiceImplTest {
+public class ItemServiceImplTest {
 
     @InjectMocks
-    private ProductServiceImpl productService;
+    private ItemServiceImpl productService;
 
     @Mock
     private Cloudinary cloudinary;
@@ -44,7 +39,7 @@ public class ProductServiceImplTest {
     }
     @Test
     public void createProduct_throwsExceptionWhenUploadFails() throws IOException {
-        CreateProductRequest request = new CreateProductRequest();
+        CreateItemRequest request = new CreateItemRequest();
         request.setProductName("Samsung Galaxy");
         request.setDescription("Latest smartphone");
         request.setPrice(800_000.0);

@@ -16,6 +16,5 @@ public class ShoppingCart {
     @DBRef
     private List<Item> items;
     private String userId;
-    private String productId;
 
 }

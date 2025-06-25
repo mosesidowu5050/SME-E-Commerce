@@ -2,10 +2,13 @@ package org.mosesidowu.smeecommerce.dtos.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
 
 @Data
-public class CreateProductResponse {
-    private String message;
+@AllArgsConstructor
+@RequiredArgsConstructor
+public class AllItemResponse {
     private String productName;
     private String description;
     private double price;
@@ -13,4 +16,4 @@ public class CreateProductResponse {
     private String imageUrl;
     private String category;
 
-}
+   }
