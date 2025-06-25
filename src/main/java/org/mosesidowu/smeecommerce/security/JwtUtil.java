@@ -54,7 +54,7 @@ public class JwtUtil {
     }
 
     public String generateToken(String email) {
-        long expirationTime = 60 * 60 * 1000; // 1 hour
+        long expirationTime = 60 * 60 * 1000;
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
