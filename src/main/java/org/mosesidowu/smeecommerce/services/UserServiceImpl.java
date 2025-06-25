@@ -89,7 +89,8 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findUsersByEmail(userLoginRequest.getEmail())
                 .orElseThrow(() -> new UserException("User not found"));
 
-        String token = jwtUtil.generateToken(user.getEmail());
+        List<String> roles = List.of(user.getRole().name());
+        String token = jwtUtil.generateToken(user.getEmail(), roles);
         if (token == null) throw new UserException("Failed to generate token");
 
         return new JwtResponse(token, user.getEmail(), List.of(user.getRole().name()));

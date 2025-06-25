@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Document("products")
-public class Item {
+public class Product {
 
     @Id
     private String productId;

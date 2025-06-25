@@ -9,7 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mosesidowu.smeecommerce.dtos.requests.CreateItemRequest;
+import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
 import org.mosesidowu.smeecommerce.exception.UserException;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 public class ItemServiceImplTest {
 
     @InjectMocks
-    private ItemServiceImpl productService;
+    private ProductServiceImpl productService;
 
     @Mock
     private Cloudinary cloudinary;
@@ -39,7 +39,7 @@ public class ItemServiceImplTest {
     }
     @Test
     public void createProduct_throwsExceptionWhenUploadFails() throws IOException {
-        CreateItemRequest request = new CreateItemRequest();
+        CreateProductRequest request = new CreateProductRequest();
         request.setProductName("Samsung Galaxy");
         request.setDescription("Latest smartphone");
         request.setPrice(800_000.0);
