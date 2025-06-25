@@ -1,25 +1,22 @@
 package org.mosesidowu.smeecommerce.services;
 
 import com.cloudinary.Cloudinary;
+import com.cloudinary.Uploader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mosesidowu.smeecommerce.data.models.Product;
-import org.mosesidowu.smeecommerce.data.models.ProductCategory;
+
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mosesidowu.smeecommerce.data.repository.ProductRepository;
 import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
-import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
-import org.mosesidowu.smeecommerce.dtos.responses.AllProductsResponse;
-import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
-import org.mosesidowu.smeecommerce.exception.ProductNotFoundException;
-import org.mosesidowu.smeecommerce.exception.UnauthorizedActionException;
 import org.mosesidowu.smeecommerce.exception.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,71 +24,69 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class ProductServiceImplTest {
 
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
+    @InjectMocks
+    private ProductServiceImpl productService;
+
+    @Mock
     private Cloudinary cloudinary;
 
+    @Mock
+    private Uploader uploader;
     @BeforeEach
     public void setUp() {
-        productRepository.deleteAll();
+        when(cloudinary.uploader()).thenReturn(uploader);
     }
     @Test
     public void createProduct_throwsExceptionWhenUploadFails() throws IOException {
         CreateProductRequest request = new CreateProductRequest();
         request.setProductName("Samsung Galaxy");
         request.setDescription("Latest smartphone");
-        request.setPrice(800.0);
-        request.setQuantity(20);
+        request.setPrice(800_000.0);
+        request.setQuantity(5);
         request.setCategory("ELECTRONICS");
-        request.setImageUrl("https://hudsonaeast.pages.dev/ryjdy-new-samsung-phone-s24-ultra-2025-images-ljgs/");
+        request.setImageUrl("https://example.com/sample-image.jpg");
 
-        MockMultipartFile image = new MockMultipartFile("image", "galaxy.jpg", "image/jpeg", "image data".getBytes());
-        when(cloudinary.uploader().upload(any(byte[].class), any(Map.class))).thenReturn(Map.of("url", "http://cloudinary.com/spectre.jpg"));
+        MockMultipartFile image = new MockMultipartFile(
+                "image",
+                "galaxy.jpg",
+                "image/jpeg",
+                "new image data".getBytes()
+        );
 
-        assertThrows(UserException.class, () -> productService.createProduct(request, image));
+        when(cloudinary.uploader().upload(any(byte[].class), any(Map.class)))
+                .thenThrow(new UserException("Missing required parameter - file"));
+
+        UserException exception = assertThrows(UserException.class, () -> {
+            productService.createProduct(request, image);
+        });
+
+        assertEquals("Failed to upload image: Missing required parameter - file", exception.getMessage());
     }
 
-//    @Test
-//    void createProduct_throwsExceptionOnUploadFailure() {
-//        CreateProductRequest request = new CreateProductRequest();
-//        request.setProductName("Samsung Galaxy");
-//        request.setDescription("Latest smartphone");
-//        request.setPrice(800.0);
-//        request.setQuantity(20);
-//        request.setCategory("ELECTRONICS");
-//
-//        MockMultipartFile image = new MockMultipartFile("image", "galaxy.jpg", "image/jpeg", "image data".getBytes());
-//        when(cloudinary.uploader().upload(any(byte[].class), any(Map.class))).thenThrow(new RuntimeException("Upload failed"));
-//
-//        assertThrows(UserException.class, () -> productService.createProduct(request, image));
-//    }
-//
-//    @Test
-//    void updateProduct_updatesSuccessfully() {
-//        Product product = new Product();
-//        product.setProductId("123");
-//        product.setProductName("Old Phone");
-//        product.setProductPrice(500.0);
-//        productRepository.save(product);
-//
-//        ProductRequestDTO dto = new ProductRequestDTO();
-//        dto.setProductName("Iphone 14");
-//        dto.setProductDescription("New model");
-//        dto.setProductPrice(900.0);
-//        dto.setProductQuantity(15);
-//        dto.setProductCategory(ProductCategory.ELECTRONICS);
-//
-//        Product updated = productService.updateProduct("123", dto);
-//
-//        assertEquals("Iphone 14", updated.getProductName());
-//        assertEquals(900.0, updated.getProductPrice());
-//    }
-//
+
+    @Test
+    void updateProduct_updatesSuccessfully() {
+        Product product = new Product();
+        product.setProductName("my old Phone");
+        product.setProductPrice(500_000.00);
+        productRepository.save(product);
+
+        ProductRequestDTO request = new ProductRequestDTO();
+        request.setProductName("Iphone 14");
+        request.setProductDescription("New model");
+        request.setProductPrice(900_000.00);
+        request.setProductQuantity(15);
+        request.setProductCategory(ProductCategory.ELECTRONICS);
+
+        Product updated = productService.updateProduct("123", request);
+
+        assertEquals("Iphone 14", updated.getProductName());
+        assertEquals(900_000.00, updated.getProductPrice());
+    }
+
 //    @Test
 //    void updateProduct_throwsProductNotFound() {
 //        ProductRequestDTO dto = new ProductRequestDTO();
@@ -149,4 +144,4 @@ public class ProductServiceImplTest {
 //        List<Product> products = productService.searchProducts("phone");
 //        assertTrue(products.isEmpty());
 //    }
-}
+    }
