@@ -42,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
             ProductMapper.mapProduct(product,request);
             product.setProductImageUrl(imageUrl);
             productRepository.save(product);
-            return ProductMapper.mapProductToResponse(product);
+            return ProductMapper.mapProductToResponse(new Product());
         } catch (UserException | IOException e) {
             throw new UserException("Failed to upload image: " + e.getMessage());
         }

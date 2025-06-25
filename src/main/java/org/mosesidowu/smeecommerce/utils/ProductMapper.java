@@ -3,6 +3,7 @@ package org.mosesidowu.smeecommerce.utils;
 import org.mosesidowu.smeecommerce.data.models.Product;
 import org.mosesidowu.smeecommerce.data.models.ProductCategory;
 import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
+import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.AllProductsResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
 
