@@ -42,6 +42,7 @@ public class ProductServiceImpl implements ProductService {
             ProductMapper.mapProduct(product,request);
             product.setProductImageUrl(imageUrl);
             productRepository.save(product);
+
             return ProductMapper.mapProductToResponse(product);
         } catch (UserException | IOException e) {
             throw new UserException("Failed to upload image: " + e.getMessage());
@@ -75,7 +76,6 @@ public class ProductServiceImpl implements ProductService {
         if (!product.getProductName().equals(email)) {
             throw new UnauthorizedActionException("You are not allowed to delete this product");
         }
-
 
         productRepository.delete(product);
     }
