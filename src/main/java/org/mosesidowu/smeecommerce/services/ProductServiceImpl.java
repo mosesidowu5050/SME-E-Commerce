@@ -56,14 +56,11 @@ public class ProductServiceImpl implements ProductService {
         Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException("Product with ID " + productId + " not found"));
 
-        existingProduct.setProductName(productDTO.getProductName());
-        existingProduct.setProductDescription(productDTO.getProductDescription());
-        existingProduct.setProductPrice(productDTO.getProductPrice());
-        existingProduct.setProductQuantity(productDTO.getProductQuantity());
-        existingProduct.setProductCategory(safeParseCategory(String.valueOf(productDTO.getProductCategory())));
+        ProductMapper.updateMapperProductResponse(productDTO, existingProduct);
 
         return productRepository.save(existingProduct);
     }
+
 
 
     @Override
@@ -90,15 +87,22 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> searchProducts(String searchTerm) {
-        return List.of();
+        return productRepository.findByProductNameContainingIgnoreCaseOrProductDescriptionContainingIgnoreCase(
+                searchTerm, searchTerm);
     }
 
-    
-    public static ProductCategory safeParseCategory(String categoryStr) {
+    @Override
+    public List<Product> searchProductsByCategoryAndName(String categoryStr, String name) {
+        ProductCategory category = fromString(categoryStr);
+        return productRepository.findByProductCategoryAndProductNameContainingIgnoreCase(category, name);
+    }
+
+
+    public static ProductCategory fromString(String input) {
         try {
-            return ProductCategory.valueOf(categoryStr.trim().toUpperCase());
-        } catch (UserException | NullPointerException e) {
-            throw new InvalidCategoryException("Invalid product category: " + categoryStr);
+            return ProductCategory.valueOf(input.trim().toUpperCase());
+        } catch (UserException e) {
+            throw new InvalidCategoryException("Invalid product category: " + input);
         }
     }
 

@@ -21,4 +21,6 @@ public interface ProductService {
     List<AllProductsResponse> getProductByCategory(ProductCategory category);
 
     List<Product> searchProducts(String searchTerm);
+
+    List<Product> searchProductsByCategoryAndName(String categoryStr, String name);
 }
