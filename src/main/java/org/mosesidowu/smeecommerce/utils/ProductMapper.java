@@ -6,6 +6,8 @@ import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
 import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.AllProductsResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
+import org.mosesidowu.smeecommerce.exception.InvalidCategoryException;
+import org.mosesidowu.smeecommerce.exception.UserException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,5 +54,22 @@ public class ProductMapper {
         response.setImageUrl(product.getProductImageUrl());
 
         return response;
+    }
+
+    public static void updateMapperProductResponse(ProductRequestDTO productDTO, Product existingProduct) {
+        existingProduct.setProductName(productDTO.getProductName());
+        existingProduct.setProductDescription(productDTO.getProductDescription());
+        existingProduct.setProductPrice(productDTO.getProductPrice());
+        existingProduct.setProductQuantity(productDTO.getProductQuantity());
+        existingProduct.setProductCategory(safeParseCategory(String.valueOf(productDTO.getProductCategory())));
+    }
+
+
+    public static ProductCategory safeParseCategory(String categoryStr) {
+        try {
+            return ProductCategory.valueOf(categoryStr.trim().toUpperCase());
+        } catch (UserException | NullPointerException e) {
+            throw new InvalidCategoryException("Invalid product category: " + categoryStr);
+        }
     }
 }
