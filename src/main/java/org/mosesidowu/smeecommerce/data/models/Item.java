@@ -5,16 +5,19 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
-
 @Data
-@Document("items")
+@Document("products")
 public class Item {
 
     @Id
-    private String itemId;
-    private int quantityOfProducts;
+    private String productId;
+    private String productName;
+    private String productDescription;
+    private double productPrice;
+    private int productQuantity;
+    private String productImageUrl;
+    private ProductCategory productCategory;
     @DBRef
-    private List<Product> productList;
+    private User createdBy;
 
 }

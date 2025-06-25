@@ -13,6 +13,6 @@ import java.util.List;
 public class Seller extends User {
 
     @DBRef
-    private List<Product> products;
+    private List<Item> items;
 
 }

@@ -1,11 +1,11 @@
 package org.mosesidowu.smeecommerce.utils;
 
-import org.mosesidowu.smeecommerce.data.models.Product;
+import org.mosesidowu.smeecommerce.data.models.Item;
 import org.mosesidowu.smeecommerce.data.models.ProductCategory;
-import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
-import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
-import org.mosesidowu.smeecommerce.dtos.responses.AllProductsResponse;
-import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
+import org.mosesidowu.smeecommerce.dtos.requests.CreateItemRequest;
+import org.mosesidowu.smeecommerce.dtos.requests.ItemRequestDTO;
+import org.mosesidowu.smeecommerce.dtos.responses.AllItemResponse;
+import org.mosesidowu.smeecommerce.dtos.responses.CreateItemResponse;
 import org.mosesidowu.smeecommerce.exception.InvalidCategoryException;
 import org.mosesidowu.smeecommerce.exception.UserException;
 
@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class ProductMapper {
-    public static AllProductsResponse mapToResponse(Product product) {
-        AllProductsResponse response = new AllProductsResponse();
+public class ItemMapper {
+    public static AllItemResponse mapToResponse(Item product) {
+        AllItemResponse response = new AllItemResponse();
         response.setProductName(product.getProductName());
         response.setDescription(product.getProductDescription());
         response.setPrice(product.getProductPrice());
@@ -27,14 +27,14 @@ public class ProductMapper {
     }
 
 
-    public static List<AllProductsResponse> toAllProductsResponse(List<Product> products) {
+    public static List<AllItemResponse> toAllProductsResponse(List<Item> products) {
         return products.stream()
-                .map(ProductMapper::mapToResponse)
+                .map(ItemMapper::mapToResponse)
                 .collect(Collectors.toList());
     }
 
 
-    public static void mapProduct(Product product, CreateProductRequest request) {
+    public static void mapProduct(Item product, CreateItemRequest request) {
         product.setProductName(request.getProductName());
         product.setProductDescription(request.getDescription());
         product.setProductPrice(request.getPrice());
@@ -44,8 +44,8 @@ public class ProductMapper {
     }
 
 
-    public static CreateProductResponse mapProductToResponse(Product product) {
-        CreateProductResponse response = new CreateProductResponse();
+    public static CreateItemResponse mapProductToResponse(Item product) {
+        CreateItemResponse response = new CreateItemResponse();
         response.setMessage("Product added successfully");
         response.setProductName(product.getProductName());
         response.setDescription(product.getProductDescription());
@@ -57,7 +57,7 @@ public class ProductMapper {
         return response;
     }
 
-    public static void updateMapperProductResponse(ProductRequestDTO productDTO, Product existingProduct) {
+    public static void updateMapperProductResponse(ItemRequestDTO productDTO, Item existingProduct) {
         existingProduct.setProductName(productDTO.getProductName());
         existingProduct.setProductDescription(productDTO.getProductDescription());
         existingProduct.setProductPrice(productDTO.getProductPrice());

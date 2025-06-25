@@ -1,10 +1,9 @@
 package org.mosesidowu.smeecommerce.dtos.requests;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-public class CreateProductRequest {
+public class CreateItemRequest {
     private String productName;
     private String description;
     private double price;
