@@ -17,5 +17,7 @@ public class Product {
     private int productQuantity;
     private String productImageUrl;
     private ProductCategory productCategory;
+    @DBRef
+    private User createdBy;
 
 }

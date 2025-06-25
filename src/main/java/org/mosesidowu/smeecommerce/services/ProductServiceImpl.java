@@ -8,10 +8,14 @@ import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
 import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.AllProductsResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
+import org.mosesidowu.smeecommerce.exception.InvalidCategoryException;
 import org.mosesidowu.smeecommerce.exception.ProductNotFoundException;
+import org.mosesidowu.smeecommerce.exception.UnauthorizedActionException;
 import org.mosesidowu.smeecommerce.exception.UserException;
 import org.mosesidowu.smeecommerce.utils.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,7 +30,7 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
     @Autowired
     private Cloudinary cloudinary;
-    private static MultipartFile image;
+
 
 
     @Override
@@ -39,6 +43,7 @@ public class ProductServiceImpl implements ProductService {
             ProductMapper.mapProduct(product,request);
             product.setProductImageUrl(imageUrl);
             productRepository.save(product);
+
             return ProductMapper.mapProductToResponse(product);
         } catch (UserException | IOException e) {
             throw new UserException("Failed to upload image: " + e.getMessage());
@@ -51,24 +56,28 @@ public class ProductServiceImpl implements ProductService {
         Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException("Product with ID " + productId + " not found"));
 
-        existingProduct.setProductName(productDTO.getProductName());
-        existingProduct.setProductDescription(productDTO.getProductDescription());
-        existingProduct.setProductPrice(productDTO.getProductPrice());
-        existingProduct.setProductQuantity(productDTO.getProductQuantity());
-        existingProduct.setProductCategory(productDTO.getProductCategory());
+        ProductMapper.updateMapperProductResponse(productDTO, existingProduct);
 
-        Map uploadResult = cloudinary.uploader().upload(imageFile.getBytes(),Map.of());
-        String imageUrl = uploadResult.get("url").toString();
-
-
-        // Save updated product
         return productRepository.save(existingProduct);
     }
 
 
+
     @Override
     public void deleteProduct(String productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException("Product with ID " + productId + " not found"));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        if (!product.getProductName().equals(email)) {
+            throw new UnauthorizedActionException("You are not allowed to delete this product");
+        }
+
+        productRepository.delete(product);
     }
+
 
     @Override
     public List<AllProductsResponse> getProductByCategory(ProductCategory category) {
@@ -78,6 +87,23 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> searchProducts(String searchTerm) {
-        return List.of();
+        return productRepository.findByProductNameContainingIgnoreCaseOrProductDescriptionContainingIgnoreCase(
+                searchTerm, searchTerm);
     }
+
+    @Override
+    public List<Product> searchProductsByCategoryAndName(String categoryStr, String name) {
+        ProductCategory category = fromString(categoryStr);
+        return productRepository.findByProductCategoryAndProductNameContainingIgnoreCase(category, name);
+    }
+
+
+    public static ProductCategory fromString(String input) {
+        try {
+            return ProductCategory.valueOf(input.trim().toUpperCase());
+        } catch (UserException e) {
+            throw new InvalidCategoryException("Invalid product category: " + input);
+        }
+    }
+
 }

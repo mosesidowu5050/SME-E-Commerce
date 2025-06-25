@@ -3,8 +3,11 @@ package org.mosesidowu.smeecommerce.utils;
 import org.mosesidowu.smeecommerce.data.models.Product;
 import org.mosesidowu.smeecommerce.data.models.ProductCategory;
 import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
+import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.AllProductsResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
+import org.mosesidowu.smeecommerce.exception.InvalidCategoryException;
+import org.mosesidowu.smeecommerce.exception.UserException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +22,7 @@ public class ProductMapper {
         response.setQuantity(product.getProductQuantity());
         response.setCategory(product.getProductCategory().name());
         response.setImageUrl(product.getProductImageUrl());
+
         return response;
     }
 
@@ -36,6 +40,7 @@ public class ProductMapper {
         product.setProductPrice(request.getPrice());
         product.setProductQuantity(request.getQuantity());
         product.setProductCategory(ProductCategory.valueOf(request.getCategory()));
+        product.setProductImageUrl(request.getImageUrl());
     }
 
 
@@ -48,6 +53,24 @@ public class ProductMapper {
         response.setQuantity(product.getProductQuantity());
         response.setCategory(product.getProductCategory().name());
         response.setImageUrl(product.getProductImageUrl());
+
         return response;
+    }
+
+    public static void updateMapperProductResponse(ProductRequestDTO productDTO, Product existingProduct) {
+        existingProduct.setProductName(productDTO.getProductName());
+        existingProduct.setProductDescription(productDTO.getProductDescription());
+        existingProduct.setProductPrice(productDTO.getProductPrice());
+        existingProduct.setProductQuantity(productDTO.getProductQuantity());
+        existingProduct.setProductCategory(safeParseCategory(String.valueOf(productDTO.getProductCategory())));
+    }
+
+
+    public static ProductCategory safeParseCategory(String categoryStr) {
+        try {
+            return ProductCategory.valueOf(categoryStr.trim().toUpperCase());
+        } catch (UserException | NullPointerException e) {
+            throw new InvalidCategoryException("Invalid product category: " + categoryStr);
+        }
     }
 }
