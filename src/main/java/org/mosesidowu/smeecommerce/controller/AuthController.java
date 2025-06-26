@@ -27,8 +27,7 @@ public class AuthController  {
     private UserService userService;
     @Autowired
     private JwtService jwtService;
-    @Autowired
-    private JwtUtil jwtUtil;
+
 
 
     @PostMapping("/register")
@@ -53,24 +52,6 @@ public class AuthController  {
         }
     }
 
-
-
-    @GetMapping("/get-user")
-    public ResponseEntity<?> getUserProfile(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.badRequest().body(new ApiResponse("Missing or invalid token", false));
-        }
-
-        String token = authHeader.substring(7);
-        String email = jwtUtil.extractUsername(token);
-        try {
-            UserRegisterResponseDTO user = userService.getUserByEmail(email);
-            return ResponseEntity.ok(new ApiResponse(user, true));
-        } catch (UserException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), false));
-        }
-    }
 
 
 

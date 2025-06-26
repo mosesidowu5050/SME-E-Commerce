@@ -40,6 +40,8 @@ public class UserServiceImpl implements UserService {
     private final JwtUtil jwtUtil;
 
 
+
+
     @Override
     public UserRegisterResponseDTO register(UserRegistrationRequestDTO userRegistrationRequest) {
         isUserRegistered(userRegistrationRequest);
@@ -93,7 +95,7 @@ public class UserServiceImpl implements UserService {
         String token = jwtUtil.generateToken(user.getEmail(), roles);
         if (token == null) throw new UserException("Failed to generate token");
 
-        return new JwtResponse(token, user.getEmail(), List.of(user.getRole().name()));
+        return new JwtResponse(token, user.getEmail(), roles);
     }
 
 

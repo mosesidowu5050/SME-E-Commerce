@@ -6,11 +6,13 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import org.mosesidowu.smeecommerce.data.models.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +43,7 @@ public class JwtUtil {
         return claims.get("roles", List.class);
     }
 
-    private Claims extractClaims(String token) {
+    Claims extractClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(signingKey)
                 .build()
@@ -59,14 +61,14 @@ public class JwtUtil {
     }
 
     public String generateToken(String email, List<String> roles) {
-        long expirationTime = 60 * 60 * 1000; // 1 hour
-
+        long expirationTime = 60 * 60 * 1000;
         return Jwts.builder()
                 .setSubject(email)
-                .addClaims(Map.of("roles", roles))
+                .claim("roles", roles)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(signingKey, SignatureAlgorithm.HS256)
                 .compact();
     }
+
 }
