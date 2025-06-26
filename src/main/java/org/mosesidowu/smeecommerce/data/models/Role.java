@@ -5,4 +5,5 @@ public enum Role {
     SELLER,
     CUSTOMER,
     ADMIN,
+
 }

@@ -3,16 +3,16 @@ package org.mosesidowu.smeecommerce.services;
 import com.cloudinary.Cloudinary;
 import org.mosesidowu.smeecommerce.data.models.Product;
 import org.mosesidowu.smeecommerce.data.models.ProductCategory;
-import org.mosesidowu.smeecommerce.data.repository.ItemRepository;
-import org.mosesidowu.smeecommerce.dtos.requests.CreateItemRequest;
-import org.mosesidowu.smeecommerce.dtos.requests.ItemRequestDTO;
-import org.mosesidowu.smeecommerce.dtos.responses.AllItemResponse;
-import org.mosesidowu.smeecommerce.dtos.responses.CreateItemResponse;
+import org.mosesidowu.smeecommerce.data.repository.ProductRepository;
+import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
+import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
+import org.mosesidowu.smeecommerce.dtos.responses.AllProductResponse;
+import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
 import org.mosesidowu.smeecommerce.exception.InvalidCategoryException;
 import org.mosesidowu.smeecommerce.exception.ItemNotFoundException;
 import org.mosesidowu.smeecommerce.exception.UnauthorizedActionException;
 import org.mosesidowu.smeecommerce.exception.UserException;
-import org.mosesidowu.smeecommerce.utils.ItemMapper;
+import org.mosesidowu.smeecommerce.utils.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,36 +27,38 @@ import java.util.Map;
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
-    private ItemRepository productRepository;
+    private ProductRepository productRepository;
     @Autowired
     private Cloudinary cloudinary;
 
 
 
     @Override
-    public CreateItemResponse createProduct(CreateItemRequest request, MultipartFile imageFile) {
+    public CreateProductResponse createProduct(CreateProductRequest request, MultipartFile imageFile) {
         try {
             Map uploadResult = cloudinary.uploader().upload(imageFile.getBytes(),Map.of());
             String imageUrl = uploadResult.get("url").toString();
 
             Product product = new Product();
-            ItemMapper.mapProduct(product,request);
+            ProductMapper.mapProduct(product,request);
+
             product.setProductImageUrl(imageUrl);
             productRepository.save(product);
 
-            return ItemMapper.mapProductToResponse(product);
+            return ProductMapper.mapProductToResponse(product);
         } catch (UserException | IOException e) {
             throw new UserException("Failed to upload image: " + e.getMessage());
         }
     }
 
 
+
     @Override
-    public Product updateProduct(String productId, ItemRequestDTO productDTO) {
+    public Product updateProduct(String productId, ProductRequestDTO productDTO) {
         Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new ItemNotFoundException("Product with ID " + productId + " not found"));
 
-        ItemMapper.updateMapperProductResponse(productDTO, existingProduct);
+        ProductMapper.updateMapperProductResponse(productDTO, existingProduct);
 
         return productRepository.save(existingProduct);
     }
@@ -80,9 +82,9 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public List<AllItemResponse> getProductByCategory(ProductCategory category) {
+    public List<AllProductResponse> getProductByCategory(ProductCategory category) {
         List<Product> products = productRepository.findByProductCategoryContainingIgnoreCase(category);
-        return ItemMapper.toAllProductsResponse(products);
+        return ProductMapper.toAllProductsResponse(products);
     }
 
     @Override

@@ -18,8 +18,10 @@ public class ShoppingCart {
     private String shoppingCartId;
     @DBRef
     private List<Item> items = new ArrayList<>();
+    private List<Product> productsList;
     private String userId;
 
+    
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

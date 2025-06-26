@@ -3,7 +3,7 @@ package org.mosesidowu.smeecommerce.dtos.responses;
 import lombok.Data;
 
 @Data
-public class CreateItemResponse {
+public class CreateProductResponse {
     private String message;
     private String productName;
     private String description;

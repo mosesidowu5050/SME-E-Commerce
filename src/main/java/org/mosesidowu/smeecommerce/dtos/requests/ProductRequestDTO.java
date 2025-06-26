@@ -4,7 +4,7 @@ import lombok.Data;
 import org.mosesidowu.smeecommerce.data.models.ProductCategory;
 
 @Data
-public class ItemRequestDTO {
+public class ProductRequestDTO {
 
     private String productName;
     private String productDescription;

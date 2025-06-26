@@ -3,7 +3,7 @@ package org.mosesidowu.smeecommerce.dtos.requests;
 import lombok.Data;
 
 @Data
-public class CreateItemRequest {
+public class CreateProductRequest {
     private String productName;
     private String description;
     private double price;

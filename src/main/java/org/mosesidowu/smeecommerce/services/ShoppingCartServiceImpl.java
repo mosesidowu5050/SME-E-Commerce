@@ -1,7 +1,7 @@
 package org.mosesidowu.smeecommerce.services;
 
 import org.mosesidowu.smeecommerce.data.models.ShoppingCart;
-import org.mosesidowu.smeecommerce.data.repository.ItemRepository;
+import org.mosesidowu.smeecommerce.data.repository.ProductRepository;
 import org.mosesidowu.smeecommerce.data.repository.ShoppingCartRepository;
 import org.mosesidowu.smeecommerce.dtos.requests.AddToCartRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Autowired
     private ShoppingCartRepository shoppingCartRepository;
     @Autowired
-    private ItemRepository productRepository;
+    private ProductRepository productRepository;
 
 
     @Override
