@@ -1,5 +1,6 @@
 package org.mosesidowu.smeecommerce.security;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +10,7 @@ import org.mosesidowu.smeecommerce.exception.UserException;
 import org.mosesidowu.smeecommerce.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws IOException, ServletException {
 
         String path = request.getServletPath();
-        if (path.startsWith("/api/auth") || path.startsWith("/api/public")) {
+        if (path.startsWith("/api/auth/**")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -63,10 +65,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
             if (jwtUtil.validateToken(token, userDetails)) {
-                List<String> roles = jwtUtil.extractRoles(token);
-                List<SimpleGrantedAuthority> authorities = roles.stream()
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+                Claims claims = jwtUtil.extractClaims(token);
+                Object rawRoles = claims.get("roles");
+
+                List<GrantedAuthority> authorities = List.of();
+
+                if (rawRoles instanceof List<?>) {
+                    authorities = ((List<?>) rawRoles).stream()
+                            .filter(role -> role instanceof String)
+                            .map(role -> new SimpleGrantedAuthority((String) role))
+                            .collect(Collectors.toList());
+                }
 
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, authorities);

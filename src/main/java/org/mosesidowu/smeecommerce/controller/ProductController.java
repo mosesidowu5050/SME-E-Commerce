@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,16 +25,20 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping(value = "/create_product", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createProduct(
+    @PostMapping("/create_product")
+    @PreAuthorize("hasAuthority('SELLER')")
+    public ResponseEntity<CreateProductResponse> createProduct(
             @RequestPart("product") CreateProductRequest request,
-            @RequestPart("image") MultipartFile imageFile) {
-        try {
-            CreateProductResponse response = productService.createProduct(request, imageFile);
-            return new ResponseEntity<>(new ApiResponse(response, true), HttpStatus.OK);
-        } catch (UserException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), false));
-        }
+            @RequestPart("imageFile") MultipartFile imageFile
+
+    ) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("Authenticated user: " + auth.getName());
+        System.out.println("Authorities: " + auth.getAuthorities());
+        CreateProductResponse response = productService.createProduct(request, imageFile);
+
+
+        return ResponseEntity.ok(response);
     }
 
 }

@@ -6,6 +6,7 @@ import org.mosesidowu.smeecommerce.data.models.User;
 import org.mosesidowu.smeecommerce.data.repository.CustomerRepository;
 import org.mosesidowu.smeecommerce.data.repository.SellerRepository;
 import org.mosesidowu.smeecommerce.data.repository.UserRepository;
+import org.mosesidowu.smeecommerce.dtos.requests.CreateSubAdminRequest;
 import org.mosesidowu.smeecommerce.dtos.requests.UserLoginRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.requests.UserRegistrationRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.JwtResponse;
@@ -16,6 +17,7 @@ import org.mosesidowu.smeecommerce.exception.PhoneNumberAlreadyExistException;
 import org.mosesidowu.smeecommerce.exception.UserException;
 import org.mosesidowu.smeecommerce.security.JwtUtil;
 import org.mosesidowu.smeecommerce.utils.AuthUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Random;
 
 import static org.mosesidowu.smeecommerce.utils.Mapper.*;
 import static org.mosesidowu.smeecommerce.utils.RoleMapper.*;
@@ -55,7 +58,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
     public JwtResponse login(UserLoginRequestDTO userLoginRequest) {
         authenticateUserLogin(userLoginRequest);
@@ -63,16 +65,17 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
     public UserRegisterResponseDTO getUserByEmail(String email) {
         User user = userRepository.findUsersByEmail(email)
                 .orElseThrow(() -> new UserException("User not found with email: " + email));
-        if (user.getEmail() == null || user.getEmail().isEmpty()) throw new InvalidEmailException("Email cannot be null or empty");
+        if (user.getEmail() == null || user.getEmail().isEmpty())
+            throw new InvalidEmailException("Email cannot be null or empty");
+
+        if (!user.isEnabled()) throw new UserException("Account is disabled");
 
         return getUserResponse(user);
     }
-
 
 
     @Override
@@ -81,6 +84,26 @@ public class UserServiceImpl implements UserService {
 
         userRepository.findUsersByEmail(email)
                 .orElseThrow(() -> new UserException("User not found with email: " + email));
+    }
+
+
+    @Override
+    public void createSubAdmin(CreateSubAdminRequest request) {
+        isEmailRegistered(request.getEmail());
+        String randomPassword = generateRandomPassword();
+        String hashedPassword = passwordEncoder.encode(randomPassword);
+        User subAdmin = getSubAminResponse(request, hashedPassword);
+
+        userRepository.save(subAdmin);
+    }
+
+
+    @Override
+    public void disableUser(String email) {
+        User user = userRepository.findUsersByEmail(email)
+                .orElseThrow(() -> new UserException("User not found"));
+        user.setEnabled(false);
+        userRepository.save(user);
     }
 
 
@@ -93,7 +116,7 @@ public class UserServiceImpl implements UserService {
         String token = jwtUtil.generateToken(user.getEmail(), roles);
         if (token == null) throw new UserException("Failed to generate token");
 
-        return new JwtResponse(token, user.getEmail(), List.of(user.getRole().name()));
+        return new JwtResponse(token, user.getEmail(), roles);
     }
 
 
@@ -113,4 +136,11 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(userRegistrationRequest.getEmail())) throw new EmailAlreadyExistException("Email already exists");
         if (userRepository.existsByPhoneNumber(userRegistrationRequest.getPhoneNumber())) throw new PhoneNumberAlreadyExistException("Phone number already exists");
     }
+
+
+    private void isEmailRegistered(String email) {
+        if (userRepository.existsByEmail(email)) throw new EmailAlreadyExistException("Email already exists");
+    }
+
+
 }
