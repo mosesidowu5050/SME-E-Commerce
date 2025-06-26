@@ -41,6 +41,7 @@ public class ProductServiceImpl implements ProductService {
 
             Product product = new Product();
             ProductMapper.mapProduct(product,request);
+
             product.setProductImageUrl(imageUrl);
             productRepository.save(product);
 
