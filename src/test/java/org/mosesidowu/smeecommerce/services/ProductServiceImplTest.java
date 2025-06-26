@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
-public class ItemServiceImplTest {
+public class ProductServiceImplTest {
 
     @InjectMocks
     private ProductServiceImpl productService;
