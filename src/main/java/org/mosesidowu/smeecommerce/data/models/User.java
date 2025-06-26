@@ -17,6 +17,7 @@ public class User {
     private String password;
     private String phoneNumber;
     private Address address;
+    private boolean enabled = true;
     private Role role;
 
 }

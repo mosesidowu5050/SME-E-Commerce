@@ -2,12 +2,15 @@ package org.mosesidowu.smeecommerce.utils;
 
 import org.mosesidowu.smeecommerce.data.models.Role;
 import org.mosesidowu.smeecommerce.data.models.User;
+import org.mosesidowu.smeecommerce.dtos.requests.CreateSubAdminRequest;
 import org.mosesidowu.smeecommerce.dtos.requests.UserRegistrationRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.UserRegisterResponseDTO;
 import org.mosesidowu.smeecommerce.exception.InvalidEmailException;
 import org.mosesidowu.smeecommerce.exception.InvalidFullNameException;
 import org.mosesidowu.smeecommerce.exception.InvalidPhoneNumberException;
 import org.mosesidowu.smeecommerce.exception.InvalidRoleException;
+
+import java.util.Random;
 
 public class Mapper {
 
@@ -35,7 +38,7 @@ public class Mapper {
     }
 
 
-    private static void isUserDetailsValid(UserRegistrationRequestDTO userRegistrationRequest) {
+    public static void isUserDetailsValid(UserRegistrationRequestDTO userRegistrationRequest) {
         validateEmail(userRegistrationRequest.getEmail());
         validatePhoneNumber(userRegistrationRequest.getPhoneNumber());
         validateFullName(userRegistrationRequest.getFullName());
@@ -66,4 +69,38 @@ public class Mapper {
         if (!role.matches("^(CUSTOMER|SELLER|ADMIN)$"))
             throw new InvalidRoleException("Invalid role. Must be CUSTOMER, BUYER or ADMIN");
     }
+
+
+
+    public static User getSubAminResponse(CreateSubAdminRequest request, String hashedPassword) {
+        User subAdmin = new User();
+        subAdmin.setEmail(request.getEmail());
+        subAdmin.setFullName(request.getFullName());
+        subAdmin.setPassword(hashedPassword);
+        subAdmin.setRole(Role.ADMIN);
+        subAdmin.setEnabled(true);
+
+        return subAdmin;
+    }
+
+
+    public static String generateRandomPassword() {
+        char[] generateToken = {
+                '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+                'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+                'u', 'v', 'w', 'x', 'y', 'z'
+        };
+
+        String savedToken = "";
+
+        Random random = new Random();
+        for (int i = 0; i < 6; i++) {
+            int randomToken = random.nextInt(generateToken.length);
+            savedToken += generateToken[randomToken];
+        }
+
+        return savedToken;
+    }
+
 }
