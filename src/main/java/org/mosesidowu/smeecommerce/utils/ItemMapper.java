@@ -1,6 +1,6 @@
 package org.mosesidowu.smeecommerce.utils;
 
-import org.mosesidowu.smeecommerce.data.models.Item;
+import org.mosesidowu.smeecommerce.data.models.Product;
 import org.mosesidowu.smeecommerce.data.models.ProductCategory;
 import org.mosesidowu.smeecommerce.dtos.requests.CreateItemRequest;
 import org.mosesidowu.smeecommerce.dtos.requests.ItemRequestDTO;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 
 public class ItemMapper {
-    public static AllItemResponse mapToResponse(Item product) {
+    public static AllItemResponse mapToResponse(Product product) {
         AllItemResponse response = new AllItemResponse();
         response.setProductName(product.getProductName());
         response.setDescription(product.getProductDescription());
@@ -27,14 +27,14 @@ public class ItemMapper {
     }
 
 
-    public static List<AllItemResponse> toAllProductsResponse(List<Item> products) {
+    public static List<AllItemResponse> toAllProductsResponse(List<Product> products) {
         return products.stream()
                 .map(ItemMapper::mapToResponse)
                 .collect(Collectors.toList());
     }
 
 
-    public static void mapProduct(Item product, CreateItemRequest request) {
+    public static void mapProduct(Product product, CreateItemRequest request) {
         product.setProductName(request.getProductName());
         product.setProductDescription(request.getDescription());
         product.setProductPrice(request.getPrice());
@@ -44,7 +44,7 @@ public class ItemMapper {
     }
 
 
-    public static CreateItemResponse mapProductToResponse(Item product) {
+    public static CreateItemResponse mapProductToResponse(Product product) {
         CreateItemResponse response = new CreateItemResponse();
         response.setMessage("Product added successfully");
         response.setProductName(product.getProductName());
@@ -57,7 +57,7 @@ public class ItemMapper {
         return response;
     }
 
-    public static void updateMapperProductResponse(ItemRequestDTO productDTO, Item existingProduct) {
+    public static void updateMapperProductResponse(ItemRequestDTO productDTO, Product existingProduct) {
         existingProduct.setProductName(productDTO.getProductName());
         existingProduct.setProductDescription(productDTO.getProductDescription());
         existingProduct.setProductPrice(productDTO.getProductPrice());

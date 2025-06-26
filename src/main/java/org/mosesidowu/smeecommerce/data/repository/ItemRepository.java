@@ -1,22 +1,22 @@
 package org.mosesidowu.smeecommerce.data.repository;
 
-import org.mosesidowu.smeecommerce.data.models.Item;
+import org.mosesidowu.smeecommerce.data.models.Product;
 import org.mosesidowu.smeecommerce.data.models.ProductCategory;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface ItemRepository extends MongoRepository<Item, String> {
+public interface ItemRepository extends MongoRepository<Product, String> {
 
-    List<Item> findByProductCategory(ProductCategory productCategory);
+    List<Product> findByProductCategory(ProductCategory productCategory);
 
-    List<Item> findByProductNameContainingIgnoreCase(String productName);
+    List<Product> findByProductNameContainingIgnoreCase(String productName);
 
-    List<Item> findByProductCategoryContainingIgnoreCase(ProductCategory category);
+    List<Product> findByProductCategoryContainingIgnoreCase(ProductCategory category);
 
-    List<Item> findByProductNameContainingIgnoreCaseOrProductDescriptionContainingIgnoreCase(
+    List<Product> findByProductNameContainingIgnoreCaseOrProductDescriptionContainingIgnoreCase(
             String name, String description);
 
-    List<Item> findByProductCategoryAndProductNameContainingIgnoreCase(ProductCategory category, String name);
+    List<Product> findByProductCategoryAndProductNameContainingIgnoreCase(ProductCategory category, String name);
 
 }

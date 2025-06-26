@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 public class ItemServiceImplTest {
 
     @InjectMocks
-    private ItemServiceImpl productService;
+    private ProductServiceImpl productService;
 
     @Mock
     private Cloudinary cloudinary;

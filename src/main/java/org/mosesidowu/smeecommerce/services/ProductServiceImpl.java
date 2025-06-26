@@ -1,7 +1,7 @@
 package org.mosesidowu.smeecommerce.services;
 
 import com.cloudinary.Cloudinary;
-import org.mosesidowu.smeecommerce.data.models.Item;
+import org.mosesidowu.smeecommerce.data.models.Product;
 import org.mosesidowu.smeecommerce.data.models.ProductCategory;
 import org.mosesidowu.smeecommerce.data.repository.ItemRepository;
 import org.mosesidowu.smeecommerce.dtos.requests.CreateItemRequest;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class ItemServiceImpl implements ItemService {
+public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ItemRepository productRepository;
@@ -39,7 +39,7 @@ public class ItemServiceImpl implements ItemService {
             Map uploadResult = cloudinary.uploader().upload(imageFile.getBytes(),Map.of());
             String imageUrl = uploadResult.get("url").toString();
 
-            Item product = new Item();
+            Product product = new Product();
             ItemMapper.mapProduct(product,request);
             product.setProductImageUrl(imageUrl);
             productRepository.save(product);
@@ -52,8 +52,8 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
-    public Item updateProduct(String productId, ItemRequestDTO productDTO) {
-        Item existingProduct = productRepository.findById(productId)
+    public Product updateProduct(String productId, ItemRequestDTO productDTO) {
+        Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new ItemNotFoundException("Product with ID " + productId + " not found"));
 
         ItemMapper.updateMapperProductResponse(productDTO, existingProduct);
@@ -65,7 +65,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public void deleteProduct(String productId) {
-        Item product = productRepository.findById(productId)
+        Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ItemNotFoundException("Product with ID " + productId + " not found"));
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -81,18 +81,18 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<AllItemResponse> getProductByCategory(ProductCategory category) {
-        List<Item> products = productRepository.findByProductCategoryContainingIgnoreCase(category);
+        List<Product> products = productRepository.findByProductCategoryContainingIgnoreCase(category);
         return ItemMapper.toAllProductsResponse(products);
     }
 
     @Override
-    public List<Item> searchProducts(String searchTerm) {
+    public List<Product> searchProducts(String searchTerm) {
         return productRepository.findByProductNameContainingIgnoreCaseOrProductDescriptionContainingIgnoreCase(
                 searchTerm, searchTerm);
     }
 
     @Override
-    public List<Item> searchProductsByCategoryAndName(String categoryStr, String name) {
+    public List<Product> searchProductsByCategoryAndName(String categoryStr, String name) {
         ProductCategory category = fromString(categoryStr);
         return productRepository.findByProductCategoryAndProductNameContainingIgnoreCase(category, name);
     }

@@ -1,15 +1,13 @@
 package org.mosesidowu.smeecommerce.data.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.NoArgsConstructor;
 
 @Data
-@Document("products")
-public class Item {
-
-    @Id
+@AllArgsConstructor
+@NoArgsConstructor
+public class Product {
     private String productId;
     private String productName;
     private String productDescription;
@@ -17,7 +15,4 @@ public class Item {
     private int productQuantity;
     private String productImageUrl;
     private ProductCategory productCategory;
-    @DBRef
-    private User createdBy;
-
 }
