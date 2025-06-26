@@ -182,6 +182,7 @@ public class UserServiceImplTest {
 
     }
 
+
     @Test
     public void testToLoginUser_throwException_whenUserUsesInvalidPassword() {
         UserRegisterResponseDTO userResponse = userService.register(registerAdmin());
