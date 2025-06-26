@@ -4,7 +4,7 @@ An enterprise-grade Spring Boot e-commerce backend application inspired by Jiji,
 
 ## 📦 Tech Stack
 
-- **Java 17**
+- **Java 21**
 - **Spring Boot 3**
 - **Spring Data MongoDB**
 - **JWT Authentication**
