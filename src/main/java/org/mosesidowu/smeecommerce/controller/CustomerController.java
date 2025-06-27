@@ -30,6 +30,8 @@ public class CustomerController {
         return ResponseEntity.ok(new ApiResponse("Item added successfully",true));
     }
 
+
+
     @GetMapping
     public ResponseEntity<?> getCart(@RequestHeader("userId") String userId) {
         ShoppingCart cart = shoppingCartService.getCartByUser(userId);
@@ -43,16 +45,25 @@ public class CustomerController {
         .toList();
         return ResponseEntity.ok(new ApiResponse(response, true));
     }
+
+
+
     @PutMapping("/update")
     public ResponseEntity<?> updateQuantity(@RequestHeader("userId") String userId, @RequestParam String productId, @RequestParam int quantity) {
         shoppingCartService.updateCart(userId,productId, quantity);
         return ResponseEntity.ok(new ApiResponse("Item updated successfully",true));
     }
+
+
+
     @DeleteMapping("/remove/{productId}")
     public ResponseEntity<?> removeItemFromCart(@RequestHeader("userId") String userId, @PathVariable String productId) {
         shoppingCartService.removeItemFromCart(userId, productId);
         return ResponseEntity.ok(new ApiResponse("Item removed",true));
     }
+
+
+
     @DeleteMapping("/clear")
     public ResponseEntity<?> clearCart(@RequestHeader("userId") String userId) {
         shoppingCartService.clearCart(userId);

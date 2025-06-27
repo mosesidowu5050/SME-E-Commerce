@@ -24,4 +24,7 @@ public interface ProductService {
     List<Product> searchProducts(String searchTerm);
 
     List<Product> searchProductsByCategoryAndName(String categoryStr, String name);
+
+    List<Product> viewAllProducts();
+
 }
