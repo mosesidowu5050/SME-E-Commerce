@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/products/**").hasAuthority("SELLER")
-                        .requestMatchers("/api/customers/**").hasAuthority("CUSTOMER")
+                        .requestMatchers("/api/cart/**").hasAuthority("CUSTOMER")
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )

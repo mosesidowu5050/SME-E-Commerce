@@ -3,6 +3,7 @@ package org.mosesidowu.smeecommerce.services;
 import com.cloudinary.Cloudinary;
 import org.mosesidowu.smeecommerce.data.models.Product;
 import org.mosesidowu.smeecommerce.data.models.ProductCategory;
+import org.mosesidowu.smeecommerce.data.models.User;
 import org.mosesidowu.smeecommerce.data.repository.ProductRepository;
 import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
 import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
@@ -12,6 +13,7 @@ import org.mosesidowu.smeecommerce.exception.InvalidCategoryException;
 import org.mosesidowu.smeecommerce.exception.ItemNotFoundException;
 import org.mosesidowu.smeecommerce.exception.UnauthorizedActionException;
 import org.mosesidowu.smeecommerce.exception.UserException;
+import org.mosesidowu.smeecommerce.utils.Mapper;
 import org.mosesidowu.smeecommerce.utils.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -101,7 +103,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> viewAllProducts() {
-        return List.of();
+        List<Product> products = productRepository.findAll();
+        return products.stream()
+                .map(ProductMapper::getProductResponse)
+                .toList();
     }
 
 
