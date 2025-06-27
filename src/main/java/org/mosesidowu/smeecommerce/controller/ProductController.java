@@ -1,6 +1,9 @@
 package org.mosesidowu.smeecommerce.controller;
 
+import com.cloudinary.Api;
+import org.mosesidowu.smeecommerce.data.models.Product;
 import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
+import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.ApiResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
 import org.mosesidowu.smeecommerce.exception.UserException;
@@ -29,16 +32,33 @@ public class ProductController {
     @PreAuthorize("hasAuthority('SELLER')")
     public ResponseEntity<CreateProductResponse> createProduct(
             @RequestPart("product") CreateProductRequest request,
-            @RequestPart("imageFile") MultipartFile imageFile
+            @RequestPart("imageFile") MultipartFile imageFile) {
 
-    ) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("Authenticated user: " + auth.getName());
-        System.out.println("Authorities: " + auth.getAuthorities());
         CreateProductResponse response = productService.createProduct(request, imageFile);
-
 
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/updateProduct")
+    @PreAuthorize("hasAuthority('SELLER')")
+    public ResponseEntity<?> updateProduct(
+            @PathVariable String productId,
+            @RequestBody ProductRequestDTO productDTO) {
+        try {
+            Product updatedProduct = productService.updateProduct(productId, productDTO);
+            return new ResponseEntity<>(new ApiResponse(updatedProduct,true),HttpStatus.OK);
+        }catch (UserException e){
+            return new ResponseEntity<>(new ApiResponse(e.getMessage(),false),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/deleteProduct")
+    @PreAuthorize("hasAuthority('SELLER')")
+    public ResponseEntity<?> deleteProduct(@PathVariable String productId) {
+        try {
+            productService.deleteProduct(productId);
+            return new ResponseEntity<>(new ApiResponse("Deleted successfully", true),HttpStatus.OK);
+        }catch (UserException e){
+        return new ResponseEntity<>(new ApiResponse(e.getMessage(),false),HttpStatus.BAD_REQUEST);}
+    }
 }
