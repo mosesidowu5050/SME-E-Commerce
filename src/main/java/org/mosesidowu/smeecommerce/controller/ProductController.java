@@ -33,8 +33,8 @@ public class ProductController {
 
     ) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("Authenticated user: " + auth.getName());
-        System.out.println("Authorities: " + auth.getAuthorities());
+//        System.out.println("Authenticated user: " + auth.getName());
+//        System.out.println("Authorities: " + auth.getAuthorities());
         CreateProductResponse response = productService.createProduct(request, imageFile);
 
 
