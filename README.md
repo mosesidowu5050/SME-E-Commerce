@@ -72,4 +72,4 @@ This project is licensed under Semicolon Africa.
 
 ---
 
-Let us know if you want this split into frontend/backend repos or want a separate `CONTRIBUTING.md`, API docs in Swagger/OpenAPI format, or deployment info (e.g. Docker, Render, Heroku).
+
