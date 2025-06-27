@@ -40,7 +40,7 @@ public class AdminController {
     }
 
 
-    @PatchMapping("/block-user")
+    @PostMapping("/block-user")
     public ResponseEntity<?> blockUser(@RequestParam String email) {
         try {
             userService.disableUser(email);

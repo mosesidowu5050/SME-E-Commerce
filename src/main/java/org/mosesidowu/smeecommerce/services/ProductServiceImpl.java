@@ -99,6 +99,11 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findByProductCategoryAndProductNameContainingIgnoreCase(category, name);
     }
 
+    @Override
+    public List<Product> viewAllProducts() {
+        return List.of();
+    }
+
 
     public static ProductCategory fromString(String input) {
         try {
