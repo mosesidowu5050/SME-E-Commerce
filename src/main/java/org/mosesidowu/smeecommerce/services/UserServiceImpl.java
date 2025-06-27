@@ -70,14 +70,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserRegisterResponseDTO getUserByEmail(String email) {
-        User user = userRepository.findUsersByEmail(email)
-                .orElseThrow(() -> new UserException("User not found with email: " + email));
-        if (user.getEmail() == null || user.getEmail().isEmpty()) throw new InvalidEmailException("Email cannot be null or empty");
-
-        if (!user.isEnabled()) throw new UserException("Account is disabled");
-
-        return getUserResponse(user);
+        return disableUserAccount(email);
     }
+
 
 
     @Override
@@ -119,6 +114,14 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    @Override
+    public void deleteUser(String email) {
+        User user = userRepository.findUsersByEmail(email)
+                .orElseThrow(() -> new UserException("User not found"));
+
+        user.setEnabled(false);
+        userRepository.delete(user);
+    }
 
 
     private JwtResponse getJwtResponse(UserLoginRequestDTO userLoginRequest) {
@@ -140,7 +143,6 @@ public class UserServiceImpl implements UserService {
 
 
 
-
     private void authenticateUserLogin(UserLoginRequestDTO userLoginRequest) {
         try {
             authenticationManager.authenticate(
@@ -155,8 +157,6 @@ public class UserServiceImpl implements UserService {
 
 
 
-
-
     private void isUserRegistered(UserRegistrationRequestDTO userRegistrationRequest) {
         if (userRepository.existsByEmail(userRegistrationRequest.getEmail())) throw new EmailAlreadyExistException("Email already exists");
         if (userRepository.existsByPhoneNumber(userRegistrationRequest.getPhoneNumber())) throw new PhoneNumberAlreadyExistException("Phone number already exists");
@@ -167,5 +167,15 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(email)) throw new EmailAlreadyExistException("Email already exists");
     }
 
+
+    private UserRegisterResponseDTO disableUserAccount(String email) {
+        User user = userRepository.findUsersByEmail(email)
+                .orElseThrow(() -> new UserException("User not found with email: " + email));
+        if (user.getEmail() == null || user.getEmail().isEmpty()) throw new InvalidEmailException("Email cannot be null or empty");
+
+        if (!user.isEnabled()) throw new UserException("This account has been blocked");
+
+        return getUserResponse(user);
+    }
 
 }

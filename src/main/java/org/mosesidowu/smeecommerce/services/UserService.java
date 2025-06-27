@@ -24,4 +24,6 @@ public interface UserService {
 
     List<UserRegisterResponseDTO> getAllUsers();
 
+    void deleteUser(String email);
+
 }
