@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -139,6 +140,19 @@ public class UserServiceImpl implements UserService {
             throw new InvalidEmailException("Invalid email or password");
         }
     }
+
+
+    public UserRegisterResponseDTO getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UserException("Unauthorized");
+        }
+
+        String email = authentication.getName();
+        return getUserByEmail(email);
+    }
+
 
 
     private void isUserRegistered(UserRegistrationRequestDTO userRegistrationRequest) {

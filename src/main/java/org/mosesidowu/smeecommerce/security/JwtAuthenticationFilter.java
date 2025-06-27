@@ -83,9 +83,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             .collect(Collectors.toList());
 
                 }
-                System.out.println("JWT email: " + email);
-                System.out.println("JWT authorities: " + authorities);
-                System.out.println("Token valid: " + jwtUtil.validateToken(token, userDetails));
+
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
 
