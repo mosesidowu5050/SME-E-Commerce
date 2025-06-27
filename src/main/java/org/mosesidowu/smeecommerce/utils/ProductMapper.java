@@ -4,7 +4,7 @@ import org.mosesidowu.smeecommerce.data.models.Product;
 import org.mosesidowu.smeecommerce.data.models.ProductCategory;
 import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
 import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
-import org.mosesidowu.smeecommerce.dtos.responses.AllProductsResponse;
+import org.mosesidowu.smeecommerce.dtos.responses.AllProductResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
 import org.mosesidowu.smeecommerce.exception.InvalidCategoryException;
 import org.mosesidowu.smeecommerce.exception.UserException;
@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 
 
 public class ProductMapper {
-    public static AllProductsResponse mapToResponse(Product product) {
-        AllProductsResponse response = new AllProductsResponse();
+    public static AllProductResponse mapToResponse(Product product) {
+        AllProductResponse response = new AllProductResponse();
         response.setProductName(product.getProductName());
         response.setDescription(product.getProductDescription());
         response.setPrice(product.getProductPrice());
@@ -27,7 +27,7 @@ public class ProductMapper {
     }
 
 
-    public static List<AllProductsResponse> toAllProductsResponse(List<Product> products) {
+    public static List<AllProductResponse> toAllProductsResponse(List<Product> products) {
         return products.stream()
                 .map(ProductMapper::mapToResponse)
                 .collect(Collectors.toList());
@@ -40,6 +40,7 @@ public class ProductMapper {
         product.setProductPrice(request.getPrice());
         product.setProductQuantity(request.getQuantity());
         product.setProductCategory(ProductCategory.valueOf(request.getCategory()));
+        product.setProductImageUrl(request.getImageUrl());
     }
 
 

@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class AllProductsResponse {
+public class AllProductResponse {
     private String productName;
     private String description;
     private double price;

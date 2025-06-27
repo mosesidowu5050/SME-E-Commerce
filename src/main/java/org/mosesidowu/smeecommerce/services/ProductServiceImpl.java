@@ -6,10 +6,10 @@ import org.mosesidowu.smeecommerce.data.models.ProductCategory;
 import org.mosesidowu.smeecommerce.data.repository.ProductRepository;
 import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
 import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
-import org.mosesidowu.smeecommerce.dtos.responses.AllProductsResponse;
+import org.mosesidowu.smeecommerce.dtos.responses.AllProductResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
 import org.mosesidowu.smeecommerce.exception.InvalidCategoryException;
-import org.mosesidowu.smeecommerce.exception.ProductNotFoundException;
+import org.mosesidowu.smeecommerce.exception.ItemNotFoundException;
 import org.mosesidowu.smeecommerce.exception.UnauthorizedActionException;
 import org.mosesidowu.smeecommerce.exception.UserException;
 import org.mosesidowu.smeecommerce.utils.ProductMapper;
@@ -41,6 +41,7 @@ public class ProductServiceImpl implements ProductService {
 
             Product product = new Product();
             ProductMapper.mapProduct(product,request);
+
             product.setProductImageUrl(imageUrl);
             productRepository.save(product);
 
@@ -51,10 +52,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
+
     @Override
     public Product updateProduct(String productId, ProductRequestDTO productDTO) {
         Product existingProduct = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException("Product with ID " + productId + " not found"));
+                .orElseThrow(() -> new ItemNotFoundException("Product with ID " + productId + " not found"));
 
         ProductMapper.updateMapperProductResponse(productDTO, existingProduct);
 
@@ -66,7 +68,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProduct(String productId) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException("Product with ID " + productId + " not found"));
+                .orElseThrow(() -> new ItemNotFoundException("Product with ID " + productId + " not found"));
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
@@ -80,7 +82,7 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public List<AllProductsResponse> getProductByCategory(ProductCategory category) {
+    public List<AllProductResponse> getProductByCategory(ProductCategory category) {
         List<Product> products = productRepository.findByProductCategoryContainingIgnoreCase(category);
         return ProductMapper.toAllProductsResponse(products);
     }
