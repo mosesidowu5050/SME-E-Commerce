@@ -1,6 +1,7 @@
 package org.mosesidowu.smeecommerce.security;
 
 import io.jsonwebtoken.Claims;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,14 +32,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
 
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws IOException, ServletException {
 
+        System.out.println("👉 JWT Filter triggered for path: " + request.getServletPath());
+        System.out.println("🌍 Incoming request: " + request.getRequestURI());
+
         String path = request.getServletPath();
-        if (path.startsWith("/api/auth/**")) {
+        if (path.startsWith("/api/auth/")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -75,10 +81,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             .filter(role -> role instanceof String)
                             .map(role -> new SimpleGrantedAuthority((String) role))
                             .collect(Collectors.toList());
-                }
 
+                }
+                System.out.println("JWT email: " + email);
+                System.out.println("JWT authorities: " + authorities);
+                System.out.println("Token valid: " + jwtUtil.validateToken(token, userDetails));
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
