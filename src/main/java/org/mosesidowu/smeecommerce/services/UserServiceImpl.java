@@ -118,6 +118,7 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
+
     @Override
     public void deleteUser(String email) {
         User user = userRepository.findUsersByEmail(email)

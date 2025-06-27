@@ -74,6 +74,9 @@ public class Mapper {
 
 
     public static User getSubAminResponse(CreateSubAdminRequest request, String hashedPassword) {
+        validateFullName(request.getFullName());
+        validateEmail(request.getEmail());
+
         User subAdmin = new User();
         subAdmin.setEmail(request.getEmail());
         subAdmin.setFullName(request.getFullName());

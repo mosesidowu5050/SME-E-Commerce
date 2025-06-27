@@ -30,15 +30,25 @@ public class AdminController {
 
     @PostMapping("/create-sub-admin")
     public ResponseEntity<?> createSubAdmin(@RequestBody CreateSubAdminRequest request) {
-        userService.createSubAdmin(request);
-        return ResponseEntity.ok("Sub-admin created and credentials sent");
+        try {
+            userService.createSubAdmin(request);
+            return new ResponseEntity<>(new ApiResponse("Sub-admin created and credentials sent", true), HttpStatus.CREATED);
+        }
+        catch (UserException e) {
+            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
+        }
     }
 
 
     @PatchMapping("/block-user")
     public ResponseEntity<?> blockUser(@RequestParam String email) {
-        userService.disableUser(email);
-        return ResponseEntity.ok("User has been blocked");
+        try {
+            userService.disableUser(email);
+            return new ResponseEntity<>(new ApiResponse("User blocked", true), HttpStatus.OK);
+        }
+        catch (UserException e) {
+            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
+        }
     }
 
 
@@ -59,6 +69,7 @@ public class AdminController {
         List<UserRegisterResponseDTO> users = userService.getAllUsers();
         return ResponseEntity.ok(new ApiResponse(users, true));
     }
+
 
     @DeleteMapping("/delete-user")
     public ResponseEntity<?> deleteUser(@RequestParam String email) {
