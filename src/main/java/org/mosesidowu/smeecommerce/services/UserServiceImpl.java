@@ -54,7 +54,6 @@ public class UserServiceImpl implements UserService {
 
         if (user.getRole().equals(Role.SELLER)) sellerRepository.save(getSeller(savedUser));
         else if (user.getRole().equals(Role.CUSTOMER)) customerRepository.save(getCustomer(savedUser));
-        else if (user.getRole().equals(Role.ADMIN)) System.out.println("Admin user created");
         else throw new UserException("Invalid user role");
 
         return getUserResponse(savedUser);
@@ -124,9 +123,13 @@ public class UserServiceImpl implements UserService {
     }
 
 
+
     private JwtResponse getJwtResponse(UserLoginRequestDTO userLoginRequest) {
         User user = userRepository.findUsersByEmail(userLoginRequest.getEmail())
                 .orElseThrow(() -> new UserException("User not found"));
+
+        if (!user.isEnabled()) throw new UserException("Account is disabled");
+        authenticateUserLogin(userLoginRequest);
 
         System.out.println("🔑 Logging in user: " + user.getEmail());
         System.out.println("🛡️ Role: " + user.getRole());
