@@ -17,6 +17,7 @@ import org.mosesidowu.smeecommerce.exception.PhoneNumberAlreadyExistException;
 import org.mosesidowu.smeecommerce.exception.UserException;
 import org.mosesidowu.smeecommerce.security.JwtUtil;
 import org.mosesidowu.smeecommerce.utils.AuthUtil;
+import org.mosesidowu.smeecommerce.utils.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -71,8 +72,7 @@ public class UserServiceImpl implements UserService {
     public UserRegisterResponseDTO getUserByEmail(String email) {
         User user = userRepository.findUsersByEmail(email)
                 .orElseThrow(() -> new UserException("User not found with email: " + email));
-        if (user.getEmail() == null || user.getEmail().isEmpty())
-            throw new InvalidEmailException("Email cannot be null or empty");
+        if (user.getEmail() == null || user.getEmail().isEmpty()) throw new InvalidEmailException("Email cannot be null or empty");
 
         if (!user.isEnabled()) throw new UserException("Account is disabled");
 
@@ -110,6 +110,17 @@ public class UserServiceImpl implements UserService {
 
 
 
+    @Override
+    public List<UserRegisterResponseDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(Mapper::getUserResponse)
+                .toList();
+    }
+
+
+
+
     private JwtResponse getJwtResponse(UserLoginRequestDTO userLoginRequest) {
         User user = userRepository.findUsersByEmail(userLoginRequest.getEmail())
                 .orElseThrow(() -> new UserException("User not found"));
@@ -129,6 +140,7 @@ public class UserServiceImpl implements UserService {
 
 
 
+
     private void authenticateUserLogin(UserLoginRequestDTO userLoginRequest) {
         try {
             authenticationManager.authenticate(
@@ -142,16 +154,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    public UserRegisterResponseDTO getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new UserException("Unauthorized");
-        }
-
-        String email = authentication.getName();
-        return getUserByEmail(email);
-    }
 
 
 

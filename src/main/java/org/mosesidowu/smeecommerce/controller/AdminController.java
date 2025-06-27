@@ -1,6 +1,5 @@
 package org.mosesidowu.smeecommerce.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.mosesidowu.smeecommerce.dtos.requests.CreateSubAdminRequest;
 import org.mosesidowu.smeecommerce.dtos.responses.ApiResponse;
@@ -17,6 +16,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/admin")
 @Validated
@@ -25,9 +26,6 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
 
     private final UserService userService;
-    private final JwtService jwtService;
-    private final JwtUtil jwtUtil;
-
 
 
     @PostMapping("/create-sub-admin")
@@ -44,18 +42,22 @@ public class AdminController {
     }
 
 
-    @GetMapping("/get-user")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<?> getUserProfile() {
+    @GetMapping("/get-user-by-email")
+    public ResponseEntity<?> getUserByEmail(@RequestParam String email) {
         try {
-            UserRegisterResponseDTO user = userService.getCurrentUser();
+            UserRegisterResponseDTO user = userService.getUserByEmail(email);
             return ResponseEntity.ok(new ApiResponse(user, true));
         } catch (UserException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(e.getMessage(), false));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse(e.getMessage(), false));
         }
     }
 
 
-
-
+    @GetMapping("/all-users")
+    public ResponseEntity<?> getAllUsers() {
+        List<UserRegisterResponseDTO> users = userService.getAllUsers();
+        return ResponseEntity.ok(new ApiResponse(users, true));
+    }
 }
+

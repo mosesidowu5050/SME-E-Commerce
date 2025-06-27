@@ -6,6 +6,8 @@ import org.mosesidowu.smeecommerce.dtos.requests.UserRegistrationRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.JwtResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.UserRegisterResponseDTO;
 
+import java.util.List;
+
 public interface UserService {
 
     UserRegisterResponseDTO register (UserRegistrationRequestDTO userRegistrationRequest);
@@ -20,5 +22,6 @@ public interface UserService {
 
     void disableUser(String email);
 
-    UserRegisterResponseDTO getCurrentUser();
+    List<UserRegisterResponseDTO> getAllUsers();
+
 }
