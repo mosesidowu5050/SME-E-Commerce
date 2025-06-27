@@ -26,6 +26,7 @@ public class AdminController {
     private final JwtUtil jwtUtil;
 
 
+
     @PostMapping("/create-sub-admin")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> createSubAdmin(@RequestBody CreateSubAdminRequest request) {
