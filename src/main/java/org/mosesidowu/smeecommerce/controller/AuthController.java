@@ -45,18 +45,6 @@ public class AuthController  {
         }
     }
 
-    @PostMapping("/test-admin-login")
-    public ResponseEntity<?> testLogin(@RequestBody UserLoginRequestDTO request) {
-        try {
-            Authentication auth = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-            );
-            return ResponseEntity.ok("✅ Logged in as: " + auth.getName());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(401).body("❌ Login failed: " + e.getMessage());
-        }
-    }
 
 
     @PostMapping("/login")

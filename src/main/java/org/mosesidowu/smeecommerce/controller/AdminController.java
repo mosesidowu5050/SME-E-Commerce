@@ -26,13 +26,13 @@ public class AdminController {
     private final JwtUtil jwtUtil;
 
 
-
     @PostMapping("/create-sub-admin")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> createSubAdmin(@RequestBody CreateSubAdminRequest request) {
         userService.createSubAdmin(request);
         return ResponseEntity.ok("Sub-admin created and credentials sent");
     }
+
 
     @PatchMapping("/block-user")
     @PreAuthorize("hasAuthority('ADMIN')")
