@@ -59,5 +59,16 @@ public class AdminController {
         List<UserRegisterResponseDTO> users = userService.getAllUsers();
         return ResponseEntity.ok(new ApiResponse(users, true));
     }
+
+    @DeleteMapping("/delete-user")
+    public ResponseEntity<?> deleteUser(@RequestParam String email) {
+        try {
+            userService.deleteUser(email);
+            return new ResponseEntity<>(new ApiResponse("User deleted successfully", true ), HttpStatus.OK);
+        }
+        catch (UserException e) {
+            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
+        }
+    }
 }
 

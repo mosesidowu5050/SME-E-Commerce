@@ -118,7 +118,14 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
+    @Override
+    public void deleteUser(String email) {
+        User user = userRepository.findUsersByEmail(email)
+                .orElseThrow(() -> new UserException("User not found"));
 
+        user.setEnabled(false);
+        userRepository.delete(user);
+    }
 
 
     private JwtResponse getJwtResponse(UserLoginRequestDTO userLoginRequest) {

@@ -22,6 +22,7 @@ public class Mapper {
         user.setPhoneNumber(userRegistrationRequest.getPhoneNumber());
         user.setFullName(userRegistrationRequest.getFullName());
         user.setRole(userRegistrationRequest.getRole());
+        user.setEnabled(true);
 
         return user;
     }
