@@ -73,4 +73,24 @@ public class SellerController {
             return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping("/search-products")
+    @PreAuthorize("hasAuthority('SELLER')")
+    public ResponseEntity<?> searchProducts(@RequestParam String searchTerm){
+        try {
+            List<Product> products = productService.searchProducts(searchTerm);
+            return new ResponseEntity<>(new ApiResponse(products, true), HttpStatus.OK);
+        }catch (UserException e){
+            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping("/search-products-by-category-and-name")
+    @PreAuthorize("hasAuthority('SELLER')")
+    public ResponseEntity<?> searchProductsByCategoryAndName(@RequestParam String categoryStr, String name){
+        try {
+            List<Product> products = productService.searchProductsByCategoryAndName(categoryStr, name);
+            return new ResponseEntity<>(new ApiResponse(products, true), HttpStatus.OK);
+        }catch (UserException e){
+            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
+        }
+    }
 }
