@@ -66,11 +66,11 @@ Idowu Moses Babatunde @mosesidowu5050
 Oderinde Suliha @oderindesuliha
 Eric Alli-balogun @Ericallibalogun
 
-Let us know if you want this split into frontend/backend repos or want a separate `CONTRIBUTING.md`, API docs in Swagger/OpenAPI format, or deployment info (e.g. Docker, Render, Heroku).
-
-
 📄 License
 This project is licensed under Semicolon Africa.
+
+
+Let us know if you want this split into frontend/backend repos or want a separate `CONTRIBUTING.md`, API docs in Swagger/OpenAPI format, or deployment info (e.g. Docker, Render, Heroku).
 
 ---
 
