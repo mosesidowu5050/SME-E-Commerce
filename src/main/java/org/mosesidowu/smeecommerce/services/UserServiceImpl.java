@@ -52,6 +52,7 @@ public class UserServiceImpl implements UserService {
 
         if (user.getRole().equals(Role.SELLER)) sellerRepository.save(getSeller(savedUser));
         else if (user.getRole().equals(Role.CUSTOMER)) customerRepository.save(getCustomer(savedUser));
+        else if (user.getRole().equals(Role.ADMIN)) System.out.println("Admin user created");
         else throw new UserException("Invalid user role");
 
         return getUserResponse(savedUser);
@@ -112,7 +113,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findUsersByEmail(userLoginRequest.getEmail())
                 .orElseThrow(() -> new UserException("User not found"));
 
+        System.out.println("🔑 Logging in user: " + user.getEmail());
+        System.out.println("🛡️ Role: " + user.getRole());
+
         List<String> roles = List.of(user.getRole().name());
+        System.out.println("📦 Roles in token: " + roles);
+
         String token = jwtUtil.generateToken(user.getEmail(), roles);
         if (token == null) throw new UserException("Failed to generate token");
 
@@ -121,12 +127,15 @@ public class UserServiceImpl implements UserService {
 
 
 
+
     private void authenticateUserLogin(UserLoginRequestDTO userLoginRequest) {
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(userLoginRequest.getEmail(), userLoginRequest.getPassword())
+                    new UsernamePasswordAuthenticationToken
+                            (userLoginRequest.getEmail(),
+                            userLoginRequest.getPassword())
             );
-        } catch (UserException e) {
+        } catch (Exception e) {
             throw new InvalidEmailException("Invalid email or password");
         }
     }
