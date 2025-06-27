@@ -1,23 +1,28 @@
 package org.mosesidowu.smeecommerce.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.mosesidowu.smeecommerce.data.models.ShoppingCart;
 import org.mosesidowu.smeecommerce.dtos.requests.AddToCartRequest;
 import org.mosesidowu.smeecommerce.dtos.responses.ApiResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.CartItemResponse;
 import org.mosesidowu.smeecommerce.services.ShoppingCartService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-
 @RequestMapping("/api/cart")
 @RestController
-public class CartController {
-    @Autowired
-    private ShoppingCartService shoppingCartService;
+@PreAuthorize("hasAuthority('CUSTOMER')")
+@Validated
+@RequiredArgsConstructor
+public class CustomerController {
+
+    private final ShoppingCartService shoppingCartService;
+
+
 
     @PostMapping("/add")
     public ResponseEntity<?> addCart(@RequestBody AddToCartRequest request, @RequestHeader("userId") String userId) {
