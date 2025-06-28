@@ -58,6 +58,7 @@ public class SellerController {
         }
     }
 
+
     @DeleteMapping("/delete_product/{productId}")
     public ResponseEntity<?> deleteProduct(@PathVariable String productId) {
         try {
