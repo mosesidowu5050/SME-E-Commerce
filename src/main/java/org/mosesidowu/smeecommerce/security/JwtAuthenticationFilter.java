@@ -11,6 +11,7 @@ import org.mosesidowu.smeecommerce.exception.UserException;
 import org.mosesidowu.smeecommerce.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,9 +41,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws IOException, ServletException {
 
-        System.out.println("👉 JWT Filter triggered for path: " + request.getServletPath());
-        System.out.println("🌍 Incoming request: " + request.getRequestURI());
-
         String path = request.getServletPath();
         if (path.startsWith("/api/auth/")) {
             filterChain.doFilter(request, response);
@@ -62,6 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 System.out.println("JWT parsing error: " + e.getMessage());
             }
         }
+
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             if (jwtService.isBlacklisted(token)) {
@@ -85,11 +84,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
 
                 UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+                        new UsernamePasswordAuthenticationToken(email, null, authorities);
 
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                System.out.println("✅ Security context set with authorities: " + authToken.getAuthorities());
+
             }
         }
 
