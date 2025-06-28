@@ -51,6 +51,17 @@ public class AdminController {
         }
     }
 
+    @PostMapping("/unblock-user")
+    public ResponseEntity<?> unblockUser(@RequestParam String email) {
+        try {
+            userService.enableUser(email);
+            return new ResponseEntity<>(new ApiResponse("User unblocked", true), HttpStatus.OK);
+        }
+        catch (UserException e) {
+            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @GetMapping("/get-user-by-email")
     public ResponseEntity<?> getUserByEmail(@RequestParam String email) {
