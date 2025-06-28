@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/products")
 @Validated
-public class ProductController {
+public class SellerController {
 
     @Autowired
     private ProductService productService;
@@ -25,14 +25,10 @@ public class ProductController {
     @PreAuthorize("hasAuthority('SELLER')")
     public ResponseEntity<CreateProductResponse> createProduct(
             @RequestPart("product") CreateProductRequest request,
-            @RequestPart("imageFile") MultipartFile imageFile
+            @RequestPart("imageFile") MultipartFile imageFile) {
 
-    ) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("Authenticated user: " + auth.getName());
-        System.out.println("Authorities: " + auth.getAuthorities());
         CreateProductResponse response = productService.createProduct(request, imageFile);
-
 
         return ResponseEntity.ok(response);
     }

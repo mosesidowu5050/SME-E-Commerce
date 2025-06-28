@@ -17,10 +17,12 @@ import org.mosesidowu.smeecommerce.exception.PhoneNumberAlreadyExistException;
 import org.mosesidowu.smeecommerce.exception.UserException;
 import org.mosesidowu.smeecommerce.security.JwtUtil;
 import org.mosesidowu.smeecommerce.utils.AuthUtil;
+import org.mosesidowu.smeecommerce.utils.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -67,15 +69,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserRegisterResponseDTO getUserByEmail(String email) {
-        User user = userRepository.findUsersByEmail(email)
-                .orElseThrow(() -> new UserException("User not found with email: " + email));
-        if (user.getEmail() == null || user.getEmail().isEmpty())
-            throw new InvalidEmailException("Email cannot be null or empty");
-
-        if (!user.isEnabled()) throw new UserException("Account is disabled");
-
-        return getUserResponse(user);
+        return disableUserAccount(email);
     }
+
 
 
     @Override
@@ -108,11 +104,39 @@ public class UserServiceImpl implements UserService {
 
 
 
+    @Override
+    public List<UserRegisterResponseDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(Mapper::getUserResponse)
+                .toList();
+    }
+
+
+    @Override
+    public void deleteUser(String email) {
+        User user = userRepository.findUsersByEmail(email)
+                .orElseThrow(() -> new UserException("User not found"));
+
+        user.setEnabled(false);
+        userRepository.delete(user);
+    }
+
+
+
     private JwtResponse getJwtResponse(UserLoginRequestDTO userLoginRequest) {
         User user = userRepository.findUsersByEmail(userLoginRequest.getEmail())
                 .orElseThrow(() -> new UserException("User not found"));
 
+        if (!user.isEnabled()) throw new UserException("Account is disabled");
+        authenticateUserLogin(userLoginRequest);
+
+        System.out.println("🔑 Logging in user: " + user.getEmail());
+        System.out.println("🛡️ Role: " + user.getRole());
+
         List<String> roles = List.of(user.getRole().name());
+        System.out.println("📦 Roles in token: " + roles);
+
         String token = jwtUtil.generateToken(user.getEmail(), roles);
         if (token == null) throw new UserException("Failed to generate token");
 
@@ -121,15 +145,19 @@ public class UserServiceImpl implements UserService {
 
 
 
+
     private void authenticateUserLogin(UserLoginRequestDTO userLoginRequest) {
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(userLoginRequest.getEmail(), userLoginRequest.getPassword())
+                    new UsernamePasswordAuthenticationToken
+                            (userLoginRequest.getEmail(),
+                            userLoginRequest.getPassword())
             );
-        } catch (UserException e) {
+        } catch (Exception e) {
             throw new InvalidEmailException("Invalid email or password");
         }
     }
+
 
 
     private void isUserRegistered(UserRegistrationRequestDTO userRegistrationRequest) {
@@ -142,5 +170,15 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(email)) throw new EmailAlreadyExistException("Email already exists");
     }
 
+
+    private UserRegisterResponseDTO disableUserAccount(String email) {
+        User user = userRepository.findUsersByEmail(email)
+                .orElseThrow(() -> new UserException("User not found with email: " + email));
+        if (user.getEmail() == null || user.getEmail().isEmpty()) throw new InvalidEmailException("Email cannot be null or empty");
+
+        if (!user.isEnabled()) throw new UserException("This account has been blocked");
+
+        return getUserResponse(user);
+    }
 
 }
