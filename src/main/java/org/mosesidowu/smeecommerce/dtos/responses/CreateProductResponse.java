@@ -4,6 +4,8 @@ import lombok.Data;
 
 @Data
 public class CreateProductResponse {
+
+    private String productId;
     private String message;
     private String productName;
     private String description;

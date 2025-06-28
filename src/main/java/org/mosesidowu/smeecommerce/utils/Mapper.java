@@ -22,6 +22,7 @@ public class Mapper {
         user.setPhoneNumber(userRegistrationRequest.getPhoneNumber());
         user.setFullName(userRegistrationRequest.getFullName());
         user.setRole(userRegistrationRequest.getRole());
+        user.setEnabled(true);
 
         return user;
     }
@@ -73,6 +74,9 @@ public class Mapper {
 
 
     public static User getSubAminResponse(CreateSubAdminRequest request, String hashedPassword) {
+        validateFullName(request.getFullName());
+        validateEmail(request.getEmail());
+
         User subAdmin = new User();
         subAdmin.setEmail(request.getEmail());
         subAdmin.setFullName(request.getFullName());

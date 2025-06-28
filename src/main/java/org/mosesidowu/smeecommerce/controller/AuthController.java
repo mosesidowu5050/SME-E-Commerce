@@ -2,6 +2,8 @@ package org.mosesidowu.smeecommerce.controller;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.mosesidowu.smeecommerce.data.models.User;
 import org.mosesidowu.smeecommerce.dtos.requests.UserLoginRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.requests.UserRegistrationRequestDTO;
@@ -18,25 +20,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
+@RestControllerAdvice
+@RequiredArgsConstructor
 public class AuthController  {
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private JwtService jwtService;
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
+    private final UserService userService;
+    private final JwtService jwtService;
 
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequestDTO registerUserRequest) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody UserRegistrationRequestDTO registerUserRequest) {
         try {
             UserRegisterResponseDTO response = userService.register(registerUserRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(response, true));
@@ -45,22 +45,10 @@ public class AuthController  {
         }
     }
 
-    @PostMapping("/test-admin-login")
-    public ResponseEntity<?> testLogin(@RequestBody UserLoginRequestDTO request) {
-        try {
-            Authentication auth = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-            );
-            return ResponseEntity.ok("✅ Logged in as: " + auth.getName());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(401).body("❌ Login failed: " + e.getMessage());
-        }
-    }
 
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody UserLoginRequestDTO loginUserRequest) {
+    public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginRequestDTO loginUserRequest) {
         try {
             JwtResponse response = userService.login(loginUserRequest);
             return ResponseEntity.ok(new ApiResponse(response, true));

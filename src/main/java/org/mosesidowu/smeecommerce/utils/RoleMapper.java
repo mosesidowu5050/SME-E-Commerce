@@ -33,7 +33,6 @@ public class RoleMapper {
         customer.setPhoneNumber(user.getPhoneNumber());
         customer.setRole(user.getRole());
         customer.setAddress(user.getAddress());
-
         customer.setShoppingCart(null);
         customer.setBillingInformation(List.of());
 

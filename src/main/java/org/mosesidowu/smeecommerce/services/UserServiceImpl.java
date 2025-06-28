@@ -17,10 +17,12 @@ import org.mosesidowu.smeecommerce.exception.PhoneNumberAlreadyExistException;
 import org.mosesidowu.smeecommerce.exception.UserException;
 import org.mosesidowu.smeecommerce.security.JwtUtil;
 import org.mosesidowu.smeecommerce.utils.AuthUtil;
+import org.mosesidowu.smeecommerce.utils.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +54,6 @@ public class UserServiceImpl implements UserService {
 
         if (user.getRole().equals(Role.SELLER)) sellerRepository.save(getSeller(savedUser));
         else if (user.getRole().equals(Role.CUSTOMER)) customerRepository.save(getCustomer(savedUser));
-        else if (user.getRole().equals(Role.ADMIN)) System.out.println("Admin user created");
         else throw new UserException("Invalid user role");
 
         return getUserResponse(savedUser);
@@ -68,15 +69,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserRegisterResponseDTO getUserByEmail(String email) {
-        User user = userRepository.findUsersByEmail(email)
-                .orElseThrow(() -> new UserException("User not found with email: " + email));
-        if (user.getEmail() == null || user.getEmail().isEmpty())
-            throw new InvalidEmailException("Email cannot be null or empty");
-
-        if (!user.isEnabled()) throw new UserException("Account is disabled");
-
-        return getUserResponse(user);
+        return disableUserAccount(email);
     }
+
 
 
     @Override
@@ -100,6 +95,25 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    public List<UserRegisterResponseDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(Mapper::getUserResponse)
+                .toList();
+    }
+
+
+    @Override
+    public void deleteUser(String email) {
+        User user = userRepository.findUsersByEmail(email)
+                .orElseThrow(() -> new UserException("User not found"));
+
+        user.setEnabled(false);
+        userRepository.delete(user);
+    }
+
+
+    @Override
     public void disableUser(String email) {
         User user = userRepository.findUsersByEmail(email)
                 .orElseThrow(() -> new UserException("User not found"));
@@ -109,16 +123,24 @@ public class UserServiceImpl implements UserService {
 
 
 
+    @Override
+    public void enableUser(String email) {
+        User user = userRepository.findUsersByEmail(email)
+                .orElseThrow(() -> new UserException("User not found"));
+
+        user.setEnabled(true);
+        userRepository.save(user);
+    }
+
+
     private JwtResponse getJwtResponse(UserLoginRequestDTO userLoginRequest) {
         User user = userRepository.findUsersByEmail(userLoginRequest.getEmail())
                 .orElseThrow(() -> new UserException("User not found"));
 
-        System.out.println("🔑 Logging in user: " + user.getEmail());
-        System.out.println("🛡️ Role: " + user.getRole());
+        if (!user.isEnabled()) throw new UserException("Account is disabled");
+        authenticateUserLogin(userLoginRequest);
 
         List<String> roles = List.of(user.getRole().name());
-        System.out.println("📦 Roles in token: " + roles);
-
         String token = jwtUtil.generateToken(user.getEmail(), roles);
         if (token == null) throw new UserException("Failed to generate token");
 
@@ -141,6 +163,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
+
     private void isUserRegistered(UserRegistrationRequestDTO userRegistrationRequest) {
         if (userRepository.existsByEmail(userRegistrationRequest.getEmail())) throw new EmailAlreadyExistException("Email already exists");
         if (userRepository.existsByPhoneNumber(userRegistrationRequest.getPhoneNumber())) throw new PhoneNumberAlreadyExistException("Phone number already exists");
@@ -151,5 +174,15 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(email)) throw new EmailAlreadyExistException("Email already exists");
     }
 
+
+    private UserRegisterResponseDTO disableUserAccount(String email) {
+        User user = userRepository.findUsersByEmail(email)
+                .orElseThrow(() -> new UserException("User not found with email: " + email));
+        if (user.getEmail() == null || user.getEmail().isEmpty()) throw new InvalidEmailException("Email cannot be null or empty");
+
+        if (!user.isEnabled()) throw new UserException("This account has been blocked");
+
+        return getUserResponse(user);
+    }
 
 }

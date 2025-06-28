@@ -3,6 +3,8 @@ package org.mosesidowu.smeecommerce.data.models;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -11,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document("products")
 public class Product {
 
-
+    @Id
     private String productId;
     private String productName;
     private String productDescription;
@@ -19,4 +21,6 @@ public class Product {
     private int productQuantity;
     private String productImageUrl;
     private ProductCategory productCategory;
+    @DBRef
+    private Seller seller;
 }
