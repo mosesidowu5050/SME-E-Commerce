@@ -47,6 +47,7 @@ public class ProductMapper {
     public static CreateProductResponse mapProductToResponse(Product product) {
         CreateProductResponse response = new CreateProductResponse();
         response.setMessage("Product added successfully");
+        response.setProductId(product.getProductId());
         response.setProductName(product.getProductName());
         response.setDescription(product.getProductDescription());
         response.setPrice(product.getProductPrice());
@@ -62,7 +63,7 @@ public class ProductMapper {
         existingProduct.setProductDescription(productDTO.getProductDescription());
         existingProduct.setProductPrice(productDTO.getProductPrice());
         existingProduct.setProductQuantity(productDTO.getProductQuantity());
-        existingProduct.setProductCategory(safeParseCategory(String.valueOf(productDTO.getProductCategory())));
+        existingProduct.setProductCategory(productDTO.getProductCategory());
     }
 
     public static Product getProductResponse(Product existingProduct) {
@@ -71,10 +72,11 @@ public class ProductMapper {
         existingProduct.setProductDescription(productDTO.getProductDescription());
         existingProduct.setProductPrice(productDTO.getProductPrice());
         existingProduct.setProductQuantity(productDTO.getProductQuantity());
-        existingProduct.setProductCategory(safeParseCategory(String.valueOf(productDTO.getProductCategory())));
+        existingProduct.setProductCategory(productDTO.getProductCategory());
 
         return existingProduct;
     }
+
 
 
     public static ProductCategory safeParseCategory(String categoryStr) {

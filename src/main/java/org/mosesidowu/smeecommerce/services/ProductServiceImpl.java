@@ -72,13 +72,6 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ItemNotFoundException("Product with ID " + productId + " not found"));
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-
-        if (!product.getProductName().equals(email)) {
-            throw new UnauthorizedActionException("You are not allowed to delete this product");
-        }
-
         productRepository.delete(product);
     }
 
