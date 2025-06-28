@@ -26,4 +26,5 @@ public interface UserService {
 
     void deleteUser(String email);
 
+    void enableUser(String email);
 }
