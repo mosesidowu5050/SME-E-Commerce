@@ -58,12 +58,14 @@ public class ProductMapper {
         return response;
     }
 
-    public static void updateMapperProductResponse(ProductRequestDTO productDTO, Product existingProduct) {
+    public static Product updateMapperProductResponse(ProductRequestDTO productDTO, Product existingProduct) {
         existingProduct.setProductName(productDTO.getProductName());
         existingProduct.setProductDescription(productDTO.getProductDescription());
         existingProduct.setProductPrice(productDTO.getProductPrice());
         existingProduct.setProductQuantity(productDTO.getProductQuantity());
         existingProduct.setProductCategory(productDTO.getProductCategory());
+
+        return existingProduct;
     }
 
     public static Product getProductResponse(Product existingProduct) {

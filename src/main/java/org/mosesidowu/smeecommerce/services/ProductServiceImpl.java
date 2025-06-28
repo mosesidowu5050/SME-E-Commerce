@@ -43,8 +43,11 @@ public class ProductServiceImpl implements ProductService {
 
             Product product = new Product();
             ProductMapper.mapProduct(product,request);
-
             product.setProductImageUrl(imageUrl);
+
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String sellerEmail = auth.getName();
+            product.setCreatedBy(sellerEmail);
             productRepository.save(product);
 
             return ProductMapper.mapProductToResponse(product);
@@ -60,9 +63,9 @@ public class ProductServiceImpl implements ProductService {
         Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new ItemNotFoundException("Product with ID " + productId + " not found"));
 
-        ProductMapper.updateMapperProductResponse(productDTO, existingProduct);
+         Product updateProduct = ProductMapper.updateMapperProductResponse(productDTO, existingProduct);
 
-        return productRepository.save(existingProduct);
+        return productRepository.save(updateProduct);
     }
 
 
@@ -72,6 +75,12 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ItemNotFoundException("Product with ID " + productId + " not found"));
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+       String currentSellerEmail  = authentication.getName();
+       if (!product.getCreatedBy().equals(currentSellerEmail )) {
+            throw new UnauthorizedActionException("You are not authorized to delete this product");
+        }
+        
         productRepository.delete(product);
     }
 
