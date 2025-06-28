@@ -65,6 +65,17 @@ public class ProductMapper {
         existingProduct.setProductCategory(safeParseCategory(String.valueOf(productDTO.getProductCategory())));
     }
 
+    public static Product getProductResponse(Product existingProduct) {
+        ProductRequestDTO productDTO = new ProductRequestDTO();
+        existingProduct.setProductName(productDTO.getProductName());
+        existingProduct.setProductDescription(productDTO.getProductDescription());
+        existingProduct.setProductPrice(productDTO.getProductPrice());
+        existingProduct.setProductQuantity(productDTO.getProductQuantity());
+        existingProduct.setProductCategory(safeParseCategory(String.valueOf(productDTO.getProductCategory())));
+
+        return existingProduct;
+    }
+
 
     public static ProductCategory safeParseCategory(String categoryStr) {
         try {
