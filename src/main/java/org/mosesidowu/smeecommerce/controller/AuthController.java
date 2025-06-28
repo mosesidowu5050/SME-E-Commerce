@@ -2,6 +2,7 @@ package org.mosesidowu.smeecommerce.controller;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.mosesidowu.smeecommerce.data.models.User;
 import org.mosesidowu.smeecommerce.dtos.requests.UserLoginRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.requests.UserRegistrationRequestDTO;
@@ -36,7 +37,7 @@ public class AuthController  {
 
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequestDTO registerUserRequest) {
+    public ResponseEntity<?> registerUser(@RequestBody @Valid UserRegistrationRequestDTO registerUserRequest) {
         try {
             UserRegisterResponseDTO response = userService.register(registerUserRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(response, true));
@@ -48,7 +49,7 @@ public class AuthController  {
 
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody UserLoginRequestDTO loginUserRequest) {
+    public ResponseEntity<?> loginUser(@RequestBody @Valid UserLoginRequestDTO loginUserRequest) {
         try {
             JwtResponse response = userService.login(loginUserRequest);
             return ResponseEntity.ok(new ApiResponse(response, true));
