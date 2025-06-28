@@ -28,24 +28,12 @@ public class SellerController {
 
     @PostMapping(value = "/create_product", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CreateProductResponse> createProduct(
-            // Use @ModelAttribute to bind form fields directly to your DTO
-            // Remove @RequestPart("product") and @RequestBody as they conflict
             @ModelAttribute @Valid CreateProductRequest request,
             @RequestPart("imageFile") MultipartFile imageFile) {
 
         CreateProductResponse response = productService.createProduct(request, imageFile);
         return ResponseEntity.ok(response);
     }
-
-
-//    @PostMapping(value = "/create_product", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    public ResponseEntity<String> testUpload(
-//            @RequestPart("product") String product,
-//            @RequestPart("imageFile") MultipartFile file) {
-//        System.out.println("Got product JSON: " + product);
-//        System.out.println("Got file: " + file.getOriginalFilename());
-//        return ResponseEntity.ok("Success");
-//    }
 
 
 }
