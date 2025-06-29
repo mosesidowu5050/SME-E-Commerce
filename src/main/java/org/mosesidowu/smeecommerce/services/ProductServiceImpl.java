@@ -3,17 +3,16 @@ package org.mosesidowu.smeecommerce.services;
 import com.cloudinary.Cloudinary;
 import org.mosesidowu.smeecommerce.data.models.Product;
 import org.mosesidowu.smeecommerce.data.models.ProductCategory;
-import org.mosesidowu.smeecommerce.data.models.User;
 import org.mosesidowu.smeecommerce.data.repository.ProductRepository;
 import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
 import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.AllProductResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
+import org.mosesidowu.smeecommerce.dtos.responses.ProductResponse;
 import org.mosesidowu.smeecommerce.exception.InvalidCategoryException;
 import org.mosesidowu.smeecommerce.exception.ItemNotFoundException;
 import org.mosesidowu.smeecommerce.exception.UnauthorizedActionException;
 import org.mosesidowu.smeecommerce.exception.UserException;
-import org.mosesidowu.smeecommerce.utils.Mapper;
 import org.mosesidowu.smeecommerce.utils.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -22,8 +21,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.mosesidowu.smeecommerce.utils.ProductMapper.*;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -42,15 +45,16 @@ public class ProductServiceImpl implements ProductService {
             String imageUrl = uploadResult.get("url").toString();
 
             Product product = new Product();
-            ProductMapper.mapProduct(product,request);
             product.setProductImageUrl(imageUrl);
 
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String sellerEmail = auth.getName();
             product.setCreatedBy(sellerEmail);
-            productRepository.save(product);
 
-            return ProductMapper.mapProductToResponse(product);
+            Product saveProduct = mapProduct(product,request);
+            productRepository.save(saveProduct);
+
+            return mapProductToResponse(saveProduct);
         } catch (UserException | IOException e) {
             throw new UserException("Failed to upload image: " + e.getMessage());
         }
@@ -86,6 +90,22 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
+    public List<AllProductResponse> viewAllProducts() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentSellerEmail  = authentication.getName();
+
+        List<Product> products = productRepository.findByCreatedBy(currentSellerEmail);
+        if (products.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return products.stream()
+                .map(ProductMapper::mapToResponse)
+                .collect(Collectors.toList());
+
+    }
+
+
+    @Override
     public List<AllProductResponse> getProductByCategory(ProductCategory category) {
         List<Product> products = productRepository.findByProductCategoryContainingIgnoreCase(category);
         return ProductMapper.toAllProductsResponse(products);
@@ -103,13 +123,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findByProductCategoryAndProductNameContainingIgnoreCase(category, name);
     }
 
-    @Override
-    public List<Product> viewAllProducts() {
-        List<Product> products = productRepository.findAll();
-        return products.stream()
-                .map(ProductMapper::getProductResponse)
-                .toList();
-    }
+
 
 
     public static ProductCategory fromString(String input) {

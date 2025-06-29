@@ -6,6 +6,7 @@ import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
 import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.AllProductResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
+import org.mosesidowu.smeecommerce.dtos.responses.ProductResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -25,6 +26,6 @@ public interface ProductService {
 
     List<Product> searchProductsByCategoryAndName(String categoryStr, String name);
 
-    List<Product> viewAllProducts();
+    List<AllProductResponse> viewAllProducts();
 
 }

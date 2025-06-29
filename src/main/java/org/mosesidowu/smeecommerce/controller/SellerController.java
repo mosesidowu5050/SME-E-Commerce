@@ -10,6 +10,7 @@ import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.AllProductResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.ApiResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
+import org.mosesidowu.smeecommerce.dtos.responses.ProductResponse;
 import org.mosesidowu.smeecommerce.exception.UserException;
 import org.mosesidowu.smeecommerce.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,18 @@ public class SellerController {
     }
 
 
+    @GetMapping("/view_all_products")
+    public ResponseEntity<?> viewAllProducts() {
+        try {
+            List<AllProductResponse>  allProducts = productService.viewAllProducts();
+            return new ResponseEntity<>(new ApiResponse(allProducts, true), HttpStatus.OK);
+        } catch (UserException e) {
+            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+
     @GetMapping("/get_product_by_category/{category}")
     public ResponseEntity<?> getProductByCategory(@PathVariable String category) {
         try {
@@ -109,12 +122,5 @@ public class SellerController {
 
 
 
-    @GetMapping("/view_all_products")
-    public ResponseEntity<?> viewAllProducts() {
-        try {
-            return new ResponseEntity<>(new ApiResponse(productService.viewAllProducts(), true), HttpStatus.OK);
-        } catch (UserException e) {
-            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
-        }
-    }
+
 }
