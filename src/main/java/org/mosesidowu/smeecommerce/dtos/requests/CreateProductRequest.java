@@ -25,6 +25,8 @@ public class CreateProductRequest {
     @NotBlank(message = "Category is required")
     private String category;
 
+    private String createdBy;
+
     @NotBlank(message = "Image URL is required")
     private String imageUrl;
 

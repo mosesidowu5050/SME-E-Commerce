@@ -21,10 +21,10 @@ public interface ProductService {
 
     List<AllProductResponse> getProductByCategory(ProductCategory category);
 
-    List<Product> searchProducts(String searchTerm);
+    List<AllProductResponse> searchProducts(String searchTerm);
 
-    List<Product> searchProductsByCategoryAndName(String categoryStr, String name);
+    List<AllProductResponse> searchProductsByCategoryAndName(String categoryStr, String name);
 
-    List<Product> viewAllProducts();
+    List<AllProductResponse> viewAllProducts();
 
 }

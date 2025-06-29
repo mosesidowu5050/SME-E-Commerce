@@ -9,11 +9,14 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class AllProductResponse {
+
+    private String productId;
     private String productName;
     private String description;
     private double price;
     private int quantity;
     private String imageUrl;
     private String category;
+    private String createdBy;
 
    }

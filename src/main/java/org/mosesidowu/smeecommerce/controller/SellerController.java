@@ -1,7 +1,6 @@
 package org.mosesidowu.smeecommerce.controller;
 
 import jakarta.validation.Valid;
-import jdk.jshell.spi.ExecutionControl;
 import lombok.RequiredArgsConstructor;
 import org.mosesidowu.smeecommerce.data.models.Product;
 import org.mosesidowu.smeecommerce.data.models.ProductCategory;
@@ -12,7 +11,6 @@ import org.mosesidowu.smeecommerce.dtos.responses.ApiResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
 import org.mosesidowu.smeecommerce.exception.UserException;
 import org.mosesidowu.smeecommerce.services.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -71,6 +69,18 @@ public class SellerController {
     }
 
 
+    @GetMapping("/view_all_products")
+    public ResponseEntity<?> viewAllProducts() {
+        try {
+            List<AllProductResponse>  allProducts = productService.viewAllProducts();
+            return new ResponseEntity<>(new ApiResponse(allProducts, true), HttpStatus.OK);
+        } catch (UserException e) {
+            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+
     @GetMapping("/get_product_by_category/{category}")
     public ResponseEntity<?> getProductByCategory(@PathVariable String category) {
         try {
@@ -81,40 +91,4 @@ public class SellerController {
         }
     }
 
-
-
-    @GetMapping("/search_products")
-    public ResponseEntity<?> searchProducts(@RequestParam String searchTerm) {
-        try {
-            List<Product> products = productService.searchProducts(searchTerm);
-            return new ResponseEntity<>(new ApiResponse(products, true), HttpStatus.OK);
-        } catch (UserException e) {
-            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-
-
-    @GetMapping("/search_products_by_category_and_name")
-    public ResponseEntity<?> searchProductsByCategoryAndName(
-            @RequestParam String category,
-            @RequestParam String name) {
-        try {
-            List<Product> products = productService.searchProductsByCategoryAndName(category, name);
-            return new ResponseEntity<>(new ApiResponse(products, true), HttpStatus.OK);
-        } catch (UserException e) {
-            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-
-
-    @GetMapping("/view_all_products")
-    public ResponseEntity<?> viewAllProducts() {
-        try {
-            return new ResponseEntity<>(new ApiResponse(productService.viewAllProducts(), true), HttpStatus.OK);
-        } catch (UserException e) {
-            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
-        }
-    }
 }
