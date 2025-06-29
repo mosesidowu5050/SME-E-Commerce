@@ -80,10 +80,13 @@ public class ProductMapper {
 
 
     public static ProductCategory safeParseCategory(String category) {
+        if (category == null || category.trim().isEmpty()) {
+            throw new InvalidCategoryException("Product category cannot be null or empty.");
+        }
         try {
             return ProductCategory.valueOf(category.trim().toUpperCase());
-        } catch (UserException | NullPointerException e) {
-            throw new InvalidCategoryException("Invalid product category: " + category);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidCategoryException("Invalid product category: '" + category + "'. Please use one of the defined categories like ELECTRONICS, CLOTHING, OTHERS, etc.");
         }
     }
 }

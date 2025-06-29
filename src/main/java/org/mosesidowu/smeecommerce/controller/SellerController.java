@@ -1,7 +1,6 @@
 package org.mosesidowu.smeecommerce.controller;
 
 import jakarta.validation.Valid;
-import jdk.jshell.spi.ExecutionControl;
 import lombok.RequiredArgsConstructor;
 import org.mosesidowu.smeecommerce.data.models.Product;
 import org.mosesidowu.smeecommerce.data.models.ProductCategory;
@@ -10,10 +9,8 @@ import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.AllProductResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.ApiResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
-import org.mosesidowu.smeecommerce.dtos.responses.ProductResponse;
 import org.mosesidowu.smeecommerce.exception.UserException;
 import org.mosesidowu.smeecommerce.services.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -93,35 +90,5 @@ public class SellerController {
             return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
         }
     }
-
-
-
-    @GetMapping("/search_products")
-    public ResponseEntity<ApiResponse> searchProducts(
-            @RequestParam (value = "term", required = false) String searchTerm) {
-        try {
-            List<AllProductResponse> products = productService.searchProducts(searchTerm);
-            return new ResponseEntity<>(new ApiResponse(products, true), HttpStatus.OK);
-        } catch (UserException e) {
-            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-
-
-    @GetMapping("/search_products_by_category_and_name")
-    public ResponseEntity<?> searchProductsByCategoryAndName(
-            @RequestParam String category,
-            @RequestParam String name) {
-        try {
-            List<AllProductResponse> products = productService.searchProductsByCategoryAndName(category, name);
-            return new ResponseEntity<>(new ApiResponse(products, true), HttpStatus.OK);
-        } catch (UserException e) {
-            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-
-
 
 }
