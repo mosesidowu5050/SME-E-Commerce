@@ -7,6 +7,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,6 +23,6 @@ public class Product {
     private int productQuantity;
     private String productImageUrl;
     private ProductCategory productCategory;
-    @DBRef
-    private Seller seller;
+    private String createdBy;
+    private LocalDate createdAt = LocalDate.now();
 }
