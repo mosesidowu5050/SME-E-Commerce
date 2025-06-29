@@ -9,7 +9,7 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@TypeAlias("seller")
+@TypeAlias("customer")
 public class Customer extends User {
 
     @DBRef
