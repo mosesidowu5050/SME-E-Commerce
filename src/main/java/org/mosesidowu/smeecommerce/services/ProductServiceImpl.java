@@ -8,7 +8,6 @@ import org.mosesidowu.smeecommerce.dtos.requests.CreateProductRequest;
 import org.mosesidowu.smeecommerce.dtos.requests.ProductRequestDTO;
 import org.mosesidowu.smeecommerce.dtos.responses.AllProductResponse;
 import org.mosesidowu.smeecommerce.dtos.responses.CreateProductResponse;
-import org.mosesidowu.smeecommerce.dtos.responses.ProductResponse;
 import org.mosesidowu.smeecommerce.exception.InvalidCategoryException;
 import org.mosesidowu.smeecommerce.exception.ItemNotFoundException;
 import org.mosesidowu.smeecommerce.exception.UnauthorizedActionException;
@@ -111,16 +110,32 @@ public class ProductServiceImpl implements ProductService {
         return ProductMapper.toAllProductsResponse(products);
     }
 
-    @Override
-    public List<Product> searchProducts(String searchTerm) {
-        return productRepository.findByProductNameContainingIgnoreCaseOrProductDescriptionContainingIgnoreCase(
-                searchTerm, searchTerm);
-    }
+
 
     @Override
-    public List<Product> searchProductsByCategoryAndName(String categoryStr, String name) {
-        ProductCategory category = fromString(categoryStr);
-        return productRepository.findByProductCategoryAndProductNameContainingIgnoreCase(category, name);
+    public List<AllProductResponse> searchProducts(String searchTerm) {
+
+        List<Product> products;
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            products = productRepository.findAll();
+        } else {
+            products = productRepository.findByProductNameContainingIgnoreCaseOrProductDescriptionContainingIgnoreCase(
+                    searchTerm.trim(), searchTerm.trim());
+        }
+        return products.stream()
+                .map(ProductMapper::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+
+
+    @Override
+    public List<AllProductResponse> searchProductsByCategoryAndName(String categoryStr, String name) {
+        ProductCategory category = ProductMapper.safeParseCategory(categoryStr);
+        List<Product> products = productRepository.findByProductCategoryAndProductNameContainingIgnoreCase(category, name);
+        return products.stream()
+                .map(ProductMapper::mapToResponse)
+                .collect(Collectors.toList());
     }
 
 

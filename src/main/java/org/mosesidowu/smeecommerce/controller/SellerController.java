@@ -97,9 +97,10 @@ public class SellerController {
 
 
     @GetMapping("/search_products")
-    public ResponseEntity<?> searchProducts(@RequestParam String searchTerm) {
+    public ResponseEntity<ApiResponse> searchProducts(
+            @RequestParam (value = "term", required = false) String searchTerm) {
         try {
-            List<Product> products = productService.searchProducts(searchTerm);
+            List<AllProductResponse> products = productService.searchProducts(searchTerm);
             return new ResponseEntity<>(new ApiResponse(products, true), HttpStatus.OK);
         } catch (UserException e) {
             return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
@@ -113,7 +114,7 @@ public class SellerController {
             @RequestParam String category,
             @RequestParam String name) {
         try {
-            List<Product> products = productService.searchProductsByCategoryAndName(category, name);
+            List<AllProductResponse> products = productService.searchProductsByCategoryAndName(category, name);
             return new ResponseEntity<>(new ApiResponse(products, true), HttpStatus.OK);
         } catch (UserException e) {
             return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
