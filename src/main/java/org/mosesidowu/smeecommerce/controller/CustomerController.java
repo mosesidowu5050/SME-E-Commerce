@@ -27,11 +27,9 @@ public class CustomerController {
     private final ShoppingCartService shoppingCartService;
     private final ProductService productService;
 
-
-
     @GetMapping("/search_products")
     public ResponseEntity<ApiResponse> searchProducts(
-            @RequestParam (value = "term", required = false) String searchTerm) {
+            @RequestParam(value = "term", required = false) String searchTerm) {
         try {
             List<AllProductResponse> products = productService.searchProducts(searchTerm);
             return new ResponseEntity<>(new ApiResponse(products, true), HttpStatus.OK);
@@ -39,8 +37,6 @@ public class CustomerController {
             return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
         }
     }
-
-
 
     @GetMapping("/search_by_category_and_name")
     public ResponseEntity<?> searchProductsByCategoryAndName(
@@ -54,50 +50,63 @@ public class CustomerController {
         }
     }
 
-
     @PostMapping("/add")
-    public ResponseEntity<?> addCart(@RequestBody AddToCartRequest request, @RequestHeader("userId") String userId) {
-        shoppingCartService.addItemToCart(userId, request);
-        return ResponseEntity.ok(new ApiResponse("Item added successfully",true));
+    public ResponseEntity<?> addCart(
+            @RequestBody AddToCartRequest request,
+            @RequestHeader("userId") String userId) {
+        try {
+            shoppingCartService.addItemToCart(userId, request);
+            return ResponseEntity.ok(new ApiResponse("Item added successfully", true));
+        } catch (UserException e) {
+            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
+        }
     }
-
-
 
     @GetMapping
     public ResponseEntity<?> getCart(@RequestHeader("userId") String userId) {
-        ShoppingCart cart = shoppingCartService.getCartByUser(userId);
-        List<CartItemResponse> response = cart.getItems().stream()
-                .map(item -> new CartItemResponse(
-                        item.getProductId(),
-                        item.getProductName(),
-                        item.getProductPrice(),
-                        item.getProductQuantity()
-                ))
-        .toList();
-        return ResponseEntity.ok(new ApiResponse(response, true));
+        try {
+            ShoppingCart cart = shoppingCartService.getCartByUser(userId);
+            List<CartItemResponse> response = cart.getItems().stream()
+                    .map(item -> new CartItemResponse(
+                            item.getProductId(),
+                            item.getProductName(),
+                            item.getProductPrice(),
+                            item.getProductQuantity()i
+                    ))
+                    .toList();
+            return ResponseEntity.ok(new ApiResponse(response, true));
+        } catch (UserException e) {
+            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
+        }
     }
-
-
 
     @PutMapping("/update")
     public ResponseEntity<?> updateQuantity(@RequestHeader("userId") String userId, @RequestParam String productId, @RequestParam int quantity) {
-        shoppingCartService.updateCart(userId,productId, quantity);
-        return ResponseEntity.ok(new ApiResponse("Item updated successfully",true));
+        try {
+            shoppingCartService.updateCart(userId, productId, quantity);
+            return ResponseEntity.ok(new ApiResponse("Item updated successfully", true));
+        } catch (UserException e) {
+            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
+        }
     }
-
-
 
     @DeleteMapping("/remove/{productId}")
     public ResponseEntity<?> removeItemFromCart(@RequestHeader("userId") String userId, @PathVariable String productId) {
-        shoppingCartService.removeItemFromCart(userId, productId);
-        return ResponseEntity.ok(new ApiResponse("Item removed",true));
+        try {
+            shoppingCartService.removeItemFromCart(userId, productId);
+            return ResponseEntity.ok(new ApiResponse("Item removed", true));
+        } catch (UserException e) {
+            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
+        }
     }
-
-
 
     @DeleteMapping("/clear")
     public ResponseEntity<?> clearCart(@RequestHeader("userId") String userId) {
-        shoppingCartService.clearCart(userId);
-        return ResponseEntity.ok(new ApiResponse("Cart cleared successfully",true));
+        try {
+            shoppingCartService.clearCart(userId);
+            return ResponseEntity.ok(new ApiResponse("Cart cleared successfully", true));
+        } catch (UserException e) {
+            return new ResponseEntity<>(new ApiResponse(e.getMessage(), false), HttpStatus.BAD_REQUEST);
+        }
     }
 }
